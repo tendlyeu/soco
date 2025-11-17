@@ -1,0 +1,57 @@
+[
+  {
+    "id": "T001",
+    "title": "AI-Powered Public Procurement Platform Development",
+    "organization": "Estonian Ministry of Economic Affairs and Communications",
+    "deadline": "2025-12-15",
+    "budget": "€450,000",
+    "category": "IT & Software Development",
+    "description": "Development of an advanced AI-powered platform for streamlining public procurement processes in Estonia. The solution should include automated tender matching, intelligent document analysis, and predictive analytics for procurement optimization.",
+    "cpv_codes": ["72000000-5", "72260000-5"],
+    "url": "https://www.tendly.eu/tenders/T001"
+  },
+  {
+    "id": "T002",
+    "title": "Green Energy Infrastructure for Public Buildings",
+    "organization": "Tallinn City Government",
+    "deadline": "2025-11-30",
+    "budget": "€2,500,000",
+    "category": "Construction & Energy",
+    "description": "Installation of solar panels, heat pumps, and energy management systems across 25 public buildings in Tallinn. The project aims to reduce carbon emissions by 40% and achieve energy cost savings of 30% within three years.",
+    "cpv_codes": ["45000000-7", "09331200-0"],
+    "url": "https://www.tendly.eu/tenders/T002"
+  },
+  {
+    "id": "T003",
+    "title": "Digital Health Records Integration System",
+    "organization": "Estonian Health Insurance Fund",
+    "deadline": "2025-12-20",
+    "budget": "€850,000",
+    "category": "Healthcare IT",
+    "description": "Development and implementation of a comprehensive digital health records integration system connecting hospitals, clinics, and pharmacies across Estonia. Must comply with GDPR and Estonian data protection regulations.",
+    "cpv_codes": ["48000000-8", "72000000-5"],
+    "url": "https://www.tendly.eu/tenders/T003"
+  },
+  {
+    "id": "T004",
+    "title": "Smart City Transportation Management Platform",
+    "organization": "Tartu City Government",
+    "deadline": "2025-12-10",
+    "budget": "€680,000",
+    "category": "Smart City & Transportation",
+    "description": "Implementation of an intelligent transportation management system including real-time traffic monitoring, public transport optimization, and integrated mobility-as-a-service platform for Tartu city.",
+    "cpv_codes": ["72000000-5", "34000000-7"],
+    "url": "https://www.tendly.eu/tenders/T004"
+  },
+  {
+    "id": "T005",
+    "title": "Cybersecurity Assessment and Enhancement Services",
+    "organization": "Estonian Information System Authority",
+    "deadline": "2025-11-25",
+    "budget": "€320,000",
+    "category": "Cybersecurity",
+    "description": "Comprehensive cybersecurity assessment of critical government infrastructure, including penetration testing, vulnerability analysis, and implementation of enhanced security measures. Must comply with NIS2 directive requirements.",
+    "cpv_codes": ["72000000-5", "72500000-0"],
+    "url": "https://www.tendly.eu/tenders/T005"
+  }
+]
