@@ -21,15 +21,16 @@ class ArcadeSocialPoster:
         if not self.api_key:
             raise ValueError("ARCADE_API_KEY must be provided or set in environment")
         
-        self.base_url = "https://api.arcade-ai.com/v1"
+        self.base_url = "https://api.arcade.dev/v1"
         self.headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": self.api_key,  # Direct API key, no Bearer prefix
             "Content-Type": "application/json"
         }
         
         # User credentials for authentication
         self.user_email = os.getenv('ARCADE_USER_EMAIL')
         self.user_password = os.getenv('ARCADE_USER_PASSWORD')
+        self.user_id = os.getenv('ARCADE_USER_ID')
     
     def authorize_user(self) -> Dict:
         """
@@ -43,6 +44,8 @@ class ArcadeSocialPoster:
             "password": self.user_password
         }
         
+        # Note: User authorization may need to be handled differently
+        # Check Arcade docs for current auth flow
         response = requests.post(
             f"{self.base_url}/auth/authorize",
             headers=self.headers,
@@ -71,11 +74,15 @@ class ArcadeSocialPoster:
             full_content = f"{content}\n\n{url}"
         
         payload = {
-            "tool": "X.PostTweet",
-            "inputs": {
-                "text": full_content
+            "tool_name": "X.PostTweet",
+            "input": {
+                "tweet_text": full_content
             }
         }
+        
+        # Add user_id if available
+        if self.user_id:
+            payload["user_id"] = self.user_id
         
         response = requests.post(
             f"{self.base_url}/tools/execute",
@@ -116,15 +123,19 @@ class ArcadeSocialPoster:
             full_content = f"{content}\n\nLearn more: {url}"
         
         payload = {
-            "tool": "LinkedIn.CreatePost",
-            "inputs": {
+            "tool_name": "LinkedIn.CreatePost",
+            "input": {
                 "text": full_content
             }
         }
         
         # Add page_id if posting to company page
         if page_id:
-            payload["inputs"]["page_id"] = page_id
+            payload["input"]["page_id"] = page_id
+        
+        # Add user_id if available
+        if self.user_id:
+            payload["user_id"] = self.user_id
         
         response = requests.post(
             f"{self.base_url}/tools/execute",
