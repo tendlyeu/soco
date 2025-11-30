@@ -15,6 +15,38 @@ from utils.social_poster import ArcadeSocialPoster
 # Load environment variables
 load_dotenv()
 
+# Authentication credentials
+AUTH_USERNAME = "info@tendly.eu"
+AUTH_PASSWORD = "Hanked2$2"
+
+
+def check_authentication():
+    """Check if user is authenticated."""
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+    
+    return st.session_state.authenticated
+
+
+def show_login_form():
+    """Display login form."""
+    st.title("🔐 Authentication Required")
+    
+    with st.form("login_form"):
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+        submit_button = st.form_submit_button("Login", type="primary")
+        
+        if submit_button:
+            if username == AUTH_USERNAME and password == AUTH_PASSWORD:
+                st.session_state.authenticated = True
+                st.success("✅ Login successful!")
+                st.rerun()
+            else:
+                st.error("❌ Invalid username or password. Please try again.")
+    
+    return False
+
 # Create summaries directory
 SUMMARIES_DIR = Path(__file__).parent / "summaries"
 SUMMARIES_DIR.mkdir(exist_ok=True)
@@ -149,6 +181,11 @@ st.set_page_config(
     layout="wide"
 )
 
+# Check authentication
+if not check_authentication():
+    show_login_form()
+    st.stop()
+
 # Title and description
 st.title("📢 Tendly Social - Automated Posting Agent")
 st.markdown("""
@@ -164,6 +201,13 @@ if 'saved_summaries' not in st.session_state:
 
 # Sidebar configuration
 st.sidebar.header("⚙️ Configuration")
+
+# Logout button
+if st.sidebar.button("🚪 Logout", use_container_width=True):
+    st.session_state.authenticated = False
+    st.rerun()
+
+st.sidebar.divider()
 
 # API Key status
 st.sidebar.subheader("API Keys Status")
