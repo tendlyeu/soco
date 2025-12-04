@@ -1,0 +1,341 @@
+[
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:32:01.804725",
+    "question": "show me the user count over time",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Result"
+    ],
+    "dataframe_records": [
+      {
+        "Result": "Here is the user count over time based on the registration date (limited to the first 10 results):\n\n- 2025-10-21: 7 users\n- 2025-10-22: 1 user\n- 2025-10-23: 5 users\n- 2025-10-24: 4 users\n- 2025-10-25: 1 user\n- 2025-10-26: 1 user\n- 2025-10-27: 2 users\n- 2025-10-28: 1 user\n- 2025-10-30: 3 users\n- 2025-10-31: 1 user"
+      }
+    ],
+    "answer": "Here is the user count over time based on the registration date (limited to the first 10 results):\n\n- 2025-10-21: 7 users\n- 2025-10-22: 1 user\n- 2025-10-23: 5 users\n- 2025-10-24: 4 users\n- 2025-10-25: 1 user\n- 2025-10-26: 1 user\n- 2025-10-27: 2 users\n- 2025-10-28: 1 user\n- 2025-10-30: 3 users\n- 2025-10-31: 1 user",
+    "error": null
+  },
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:32:51.601342",
+    "question": "show me the tenders and cpv codes / sectors with highest value",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Result"
+    ],
+    "dataframe_records": [
+      {
+        "Result": "Here are the top 10 tenders with the highest estimated values along with their CPV codes and sectors:\n\n1. **Rail Baltica Ülemiste-Pärnu, Pärnu–Läti piir põhitrassi projekteerimine ja ehitus (Allianss)**  \n   - CPV Code: 45234100-7  \n   - Sector: Railway construction works  \n   - Estimated Cost: €932,000,000.00\n\n2. **Rail Baltica Tootsi-Pärnu, Pärnu–Läti piir põhitrassi ning Ülemiste–Pärnu põhitrassi pealisehituse projekteerimine ja ehitamine**  \n   - CPV Code: 45234100-7  \n   - Sector: Raudtee ehitustööd (Railway construction works)  \n   - Estimated Cost: €900,000,000.00\n\n3. **Militaar-ratassõidukid**  \n   - CPV Code: 34100000-8  \n   - Sector: Mootorsõidukid (Motor vehicles)  \n   - Estimated Cost: €693,000,000.00\n\n4. **Toiduvarude ladustamine**  \n   - CPV Code: 63120000-6  \n   - Sector: Hoiu- ja laoteenused (Storage and warehousing services)  \n   - Estimated Cost: €600,000,000.00\n\n5. **Suurekaliibriline laskemoon (35mm, 40mm alakaliibriline, 155mm)**  \n   - CPV Code: 35331000-3  \n   - Sector: Tulirelvade ja sõjatehnika laskemoon (Ammunition for firearms and warfare)  \n   - Estimated Cost: €500,000,000.00\n\n6. **Droonituvastusseadmete soetus ja paigaldus**  \n   - CPV Code: 35720000-7  \n   - Sector: Luure, seire ja sihtmärgituvastus (Intelligence, surveillance, target acquisition)  \n   - Estimated Cost: €460,000,000.00\n\n7. **Varitseva õhuründemoona raamleping**  \n   - CPV Code: 35330000-6  \n   - Sector: Ammunition  \n   - Estimated Cost: €400,000,000.00\n\n8. **Sopi tuulepargi kompleksi ja Tootsi tuulepargi tuulikute tarne, ehitus ning hooldus** (listed twice in results)  \n   - CPV Code: 31121300-3  \n   - Sector: Tuulegeneraatorid (Wind-power generators)  \n   - Estimated Cost: €357,900,000.00\n\n9. **Kasvajavastased ja immunomoduleerivad ained**  \n   - CPV Code: 33600000-6  \n   - Sector: Pharmaceutical products  \n   - Estimated Cost: €300,000,000.00\n\nThese are the tenders with the highest estimated costs in the database, ordered from highest to lowest value."
+      }
+    ],
+    "answer": "Here are the top 10 tenders with the highest estimated values along with their CPV codes and sectors:\n\n1. **Rail Baltica Ülemiste-Pärnu, Pärnu–Läti piir põhitrassi projekteerimine ja ehitus (Allianss)**  \n   - CPV Code: 45234100-7  \n   - Sector: Railway construction works  \n   - Estimated Cost: €932,000,000.00\n\n2. **Rail Baltica Tootsi-Pärnu, Pärnu–Läti piir põhitrassi ning Ülemiste–Pärnu põhitrassi pealisehituse projekteerimine ja ehitamine**  \n   - CPV Code: 45234100-7  \n   - Sector: Raudtee ehitustööd (Railway construction works)  \n   - Estimated Cost: €900,000,000.00\n\n3. **Militaar-ratassõidukid**  \n   - CPV Code: 34100000-8  \n   - Sector: Mootorsõidukid (Motor vehicles)  \n   - Estimated Cost: €693,000,000.00\n\n4. **Toiduvarude ladustamine**  \n   - CPV Code: 63120000-6  \n   - Sector: Hoiu- ja laoteenused (Storage and warehousing services)  \n   - Estimated Cost: €600,000,000.00\n\n5. **Suurekaliibriline laskemoon (35mm, 40mm alakaliibriline, 155mm)**  \n   - CPV Code: 35331000-3  \n   - Sector: Tulirelvade ja sõjatehnika laskemoon (Ammunition for firearms and warfare)  \n   - Estimated Cost: €500,000,000.00\n\n6. **Droonituvastusseadmete soetus ja paigaldus**  \n   - CPV Code: 35720000-7  \n   - Sector: Luure, seire ja sihtmärgituvastus (Intelligence, surveillance, target acquisition)  \n   - Estimated Cost: €460,000,000.00\n\n7. **Varitseva õhuründemoona raamleping**  \n   - CPV Code: 35330000-6  \n   - Sector: Ammunition  \n   - Estimated Cost: €400,000,000.00\n\n8. **Sopi tuulepargi kompleksi ja Tootsi tuulepargi tuulikute tarne, ehitus ning hooldus** (listed twice in results)  \n   - CPV Code: 31121300-3  \n   - Sector: Tuulegeneraatorid (Wind-power generators)  \n   - Estimated Cost: €357,900,000.00\n\n9. **Kasvajavastased ja immunomoduleerivad ained**  \n   - CPV Code: 33600000-6  \n   - Sector: Pharmaceutical products  \n   - Estimated Cost: €300,000,000.00\n\nThese are the tenders with the highest estimated costs in the database, ordered from highest to lowest value.",
+    "error": null
+  },
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:39:45.316562",
+    "question": "show me the tenders and cpv codes / sectors with highest value",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Error"
+    ],
+    "dataframe_records": [
+      {
+        "Error": "No results returned"
+      }
+    ],
+    "answer": "Here are the top 10 tenders with the highest estimated value, along with their CPV codes and sectors. Note that the estimated cost data appears to be unavailable (`None`) in the results:\n\n1. **Tender Name**: Meditsiinilised kindad  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 33140000-3  \n   - **Sector**: Medical consumables\n\n2. **Tender Name**: Tervishoiuteenuse osutaja kohustuslik vastutuskindlustus  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 66512200-4  \n   - **Sector**: Health insurance services\n\n3. **Tender Name**: SF6-vabade keskpinge jaotusseadmete turu-uuring  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 31682540-7  \n   - **Sector**: Substation equipment\n\n4. **Tender Name**: Reisikorraldusteenuse ja iseteenindussüsteemi hankimine/Travel arrangement service and self-service system  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 63500000-4  \n   - **Sector**: Travel agency, tour operator and tourist assistance services\n\n5. **Tender Name**: Värvimistöödega seotud materjalide ostmise hankele eelnev turu-uuring  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 44800000-8  \n   - **Sector**: Paints, varnishes and mastics\n\n6. **Tender Name**: Kaitseülikonnad (keskkonnahoidlik hange)  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 33141000-0  \n   - **Sector**: Disposable non-chemical medical consumables and haematological consumables\n\n7. **Tender Name**: Viljandi Linnavalitsuse ja hallatavate asutuste riistvara hange 2024 - 2029  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 30200000-1  \n   - **Sector**: Computer equipment and supplies\n\n8. **Tender Name**: Haavaravisüsteemi ja kuluvahendite turu-uuring  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 33160000-9  \n   - **Sector**: Operating techniques\n\n9. **Tender Name**: Intellektuaalomandi streteegia praktikum  \n   - **Estimated Cost**: Not available  \n   - **CPV Code**: 79400000-8  \n   - **Sector**: Business and management consultancy and related services\n\n10. **Tender Name**: Operatsioonikeskuse loputuspumpade süsteemid  \n    - **Estimated Cost**: Not available  \n    - **CPV Code**: 33162000-3  \n    - **Sector**: Operating theatre devices and instruments\n\n**Note**: The estimated cost data is not displayed in the results, possibly due to missing or unpopulated data in the database for these records. If you need further assistance or a different approach to determine tender values (e.g., using contract costs from another table), please let me know.",
+    "error": null
+  },
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:43:01.704234",
+    "question": "how many tenders are there total",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Error"
+    ],
+    "dataframe_records": [
+      {
+        "Error": "No results returned"
+      }
+    ],
+    "answer": "There are a total of 50,021 tenders.",
+    "error": null
+  },
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:51:00.220358",
+    "question": "what are the most common tender categories",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Error"
+    ],
+    "dataframe_records": [
+      {
+        "Error": "No results returned"
+      }
+    ],
+    "answer": "The most common tender categories in the database are:\n1. Elektripaigaldustööd (2614 tenders)\n2. Electrical installation work (901 tenders)\n3. Ehitiste või nende osade ehitustööd ja tsiviilehitustööd (770 tenders)\n4. Tarkvara programmeerimis- ja nõustamisteenused (667 tenders)\n5. Arhitektuuri-, insener-tehnilise projekteerimise ja planeerimisteenused (614 tenders)\n6. Tehnilise projekteerimise teenused (563 tenders)\n7. Meditsiiniseadmed (512 tenders)\n8. Vee- ja kanalisatsioonitorustike ehitustööd (424 tenders)\n9. Ehitusjärelevalveteenused (392 tenders)\n10. Ravimid (386 tenders)",
+    "error": null
+  },
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:53:42.476663",
+    "question": "show me the user count over time",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Error"
+    ],
+    "dataframe_records": [
+      {
+        "Error": "No results returned"
+      }
+    ],
+    "answer": "Here is the user count over time based on the registration date (limited to the first 10 results):\n\n- 2025-10-21: 7 users\n- 2025-10-22: 1 user\n- 2025-10-23: 5 users\n- 2025-10-24: 4 users\n- 2025-10-25: 1 user\n- 2025-10-26: 1 user\n- 2025-10-27: 2 users\n- 2025-10-28: 1 user\n- 2025-10-30: 3 users\n- 2025-10-31: 1 user",
+    "error": null
+  },
+  {
+    "session_id": "fabdaa7e-027d-48c2-aca6-bfa6569a3e1a",
+    "timestamp": "2025-12-04T21:57:40.861583",
+    "question": "show me the user count over time",
+    "sql_query": null,
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Error"
+    ],
+    "dataframe_records": [
+      {
+        "Error": "No results returned"
+      }
+    ],
+    "answer": "Here is the user count over time based on the registration date for the 10 most recent dates:\n\n- 2025-12-04: 8 users\n- 2025-12-03: 9 users\n- 2025-12-02: 34 users\n- 2025-11-28: 1 user\n- 2025-11-27: 2 users\n- 2025-11-25: 1 user\n- 2025-11-21: 2 users\n- 2025-11-19: 3 users\n- 2025-11-18: 2 users\n- 2025-11-14: 2 users",
+    "error": null
+  },
+  {
+    "session_id": "f311851f-447e-4c0f-818a-be5d21e37c30",
+    "timestamp": "2025-12-04T22:00:51.949890",
+    "question": "show me the user count over time",
+    "sql_query": "SELECT DATE_TRUNC('month', created_at) AS month, COUNT(*) AS user_count\nFROM users\nGROUP BY DATE_TRUNC('month', created_at)\nORDER BY month;",
+    "row_count": 3,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "month",
+      "user_count"
+    ],
+    "dataframe_records": [
+      {
+        "month": "2025-10-01",
+        "user_count": 26
+      },
+      {
+        "month": "2025-11-01",
+        "user_count": 45
+      },
+      {
+        "month": "2025-12-01",
+        "user_count": 51
+      }
+    ],
+    "answer": null,
+    "error": null
+  },
+  {
+    "session_id": "f311851f-447e-4c0f-818a-be5d21e37c30",
+    "timestamp": "2025-12-04T22:01:02.825009",
+    "question": "show me the tenders and cpv codes / sectors with highest value",
+    "sql_query": "SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost, \n    etd.currency\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;",
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "Error"
+    ],
+    "dataframe_records": [
+      {
+        "Error": "SQL execution failed: SQL execution failed: (psycopg2.errors.UndefinedColumn) column etd.currency does not exist\nLINE 8:     etd.currency\n            ^\n\n[SQL: SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost, \n    etd.currency\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;]\n(Background on this error at: https://sqlalche.me/e/20/f405)"
+      }
+    ],
+    "answer": null,
+    "error": "SQL execution failed: (psycopg2.errors.UndefinedColumn) column etd.currency does not exist\nLINE 8:     etd.currency\n            ^\n\n[SQL: SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost, \n    etd.currency\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;]\n(Background on this error at: https://sqlalche.me/e/20/f405)"
+  },
+  {
+    "session_id": "f311851f-447e-4c0f-818a-be5d21e37c30",
+    "timestamp": "2025-12-04T22:01:21.975607",
+    "question": "what are the most common tender categories",
+    "sql_query": "SELECT \n    main_cpv_name AS tender_category, \n    COUNT(*) AS tender_count\nFROM estonian_tenders\nGROUP BY main_cpv_name\nORDER BY tender_count DESC\nLIMIT 10;",
+    "row_count": 10,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "tender_category",
+      "tender_count"
+    ],
+    "dataframe_records": [
+      {
+        "tender_category": "Elektripaigaldustööd",
+        "tender_count": 2614
+      },
+      {
+        "tender_category": "Electrical installation work",
+        "tender_count": 901
+      },
+      {
+        "tender_category": "Ehitiste või nende osade ehitustööd ja tsiviilehitustööd",
+        "tender_count": 770
+      },
+      {
+        "tender_category": "Tarkvara programmeerimis- ja nõustamisteenused",
+        "tender_count": 667
+      },
+      {
+        "tender_category": "Arhitektuuri-, insener-tehnilise projekteerimise ja planeerimisteenused",
+        "tender_count": 614
+      },
+      {
+        "tender_category": "Tehnilise projekteerimise teenused",
+        "tender_count": 563
+      },
+      {
+        "tender_category": "Meditsiiniseadmed",
+        "tender_count": 512
+      },
+      {
+        "tender_category": "Vee- ja kanalisatsioonitorustike ehitustööd",
+        "tender_count": 424
+      },
+      {
+        "tender_category": "Ehitusjärelevalveteenused",
+        "tender_count": 392
+      },
+      {
+        "tender_category": "Ravimid",
+        "tender_count": 386
+      }
+    ],
+    "answer": null,
+    "error": null
+  },
+  {
+    "session_id": "f311851f-447e-4c0f-818a-be5d21e37c30",
+    "timestamp": "2025-12-04T22:01:41.182894",
+    "question": "show me the tenders and cpv codes / sectors with highest value",
+    "sql_query": "SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.contracting_authority_name, \n    etd.estimated_cost, \n    et.main_cpv_id, \n    et.main_cpv_name\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;",
+    "row_count": 10,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "procurement_id",
+      "procurement_name",
+      "procurement_reference_nr",
+      "contracting_authority_name",
+      "estimated_cost",
+      "main_cpv_id",
+      "main_cpv_name"
+    ],
+    "dataframe_records": [
+      {
+        "procurement_id": 7804164,
+        "procurement_name": "Rail Baltica Ülemiste-Pärnu, Pärnu–Läti piir põhitrassi projekteerimine ja ehitus (Allianss)",
+        "procurement_reference_nr": "284278",
+        "contracting_authority_name": "osaühing Rail Baltic Estonia",
+        "estimated_cost": 932000000.0,
+        "main_cpv_id": 6211,
+        "main_cpv_name": "Railway construction works"
+      },
+      {
+        "procurement_id": 7323924,
+        "procurement_name": "Rail Baltica Tootsi-Pärnu, Pärnu–Läti piir põhitrassi ning Ülemiste–Pärnu põhitrassi pealisehituse projekteerimine ja ehitamine",
+        "procurement_reference_nr": "279428",
+        "contracting_authority_name": "osaühing Rail Baltic Estonia",
+        "estimated_cost": 900000000.0,
+        "main_cpv_id": 6211,
+        "main_cpv_name": "Raudtee ehitustööd"
+      },
+      {
+        "procurement_id": 2864512,
+        "procurement_name": "Militaar-ratassõidukid",
+        "procurement_reference_nr": "232502",
+        "contracting_authority_name": "Riigi Kaitseinvesteeringute Keskus",
+        "estimated_cost": 693000000.0,
+        "main_cpv_id": 5244,
+        "main_cpv_name": "Mootorsõidukid"
+      },
+      {
+        "procurement_id": 5841800,
+        "procurement_name": "Toiduvarude ladustamine",
+        "procurement_reference_nr": "263917",
+        "contracting_authority_name": "Riigi Kaitseinvesteeringute Keskus",
+        "estimated_cost": 600000000.0,
+        "main_cpv_id": 7078,
+        "main_cpv_name": "Hoiu- ja laoteenused"
+      },
+      {
+        "procurement_id": 5078820,
+        "procurement_name": "Suurekaliibriline laskemoon (35mm, 40mm alakaliibriline, 155mm)",
+        "procurement_reference_nr": "255992",
+        "contracting_authority_name": "Riigi Kaitseinvesteeringute Keskus",
+        "estimated_cost": 500000000.0,
+        "main_cpv_id": 9006,
+        "main_cpv_name": "Tulirelvade ja sõjatehnika laskemoon"
+      },
+      {
+        "procurement_id": 8790204,
+        "procurement_name": "Droonituvastusseadmete soetus ja paigaldus",
+        "procurement_reference_nr": "294715",
+        "contracting_authority_name": "Politsei- ja Piirivalveamet",
+        "estimated_cost": 460000000.0,
+        "main_cpv_id": 12397,
+        "main_cpv_name": "Luure, seire ja sihtmärgituvastus"
+      },
+      {
+        "procurement_id": 7147692,
+        "procurement_name": "Varitseva õhuründemoona raamleping",
+        "procurement_reference_nr": "277491",
+        "contracting_authority_name": "Riigi Kaitseinvesteeringute Keskus",
+        "estimated_cost": 400000000.0,
+        "main_cpv_id": 9005,
+        "main_cpv_name": "Ammunition"
+      },
+      {
+        "procurement_id": 4472928,
+        "procurement_name": "Sopi tuulepargi kompleksi ja Tootsi tuulepargi tuulikute tarne, ehitus ning hooldus",
+        "procurement_reference_nr": "249603",
+        "contracting_authority_name": "Enefit Wind Purtse AS",
+        "estimated_cost": 357900000.0,
+        "main_cpv_id": 4262,
+        "main_cpv_name": "Tuulegeneraatorid"
+      },
+      {
+        "procurement_id": 4725760,
+        "procurement_name": "Sopi tuulepargi kompleksi ja Tootsi tuulepargi tuulikute tarne, ehitus ning hooldus",
+        "procurement_reference_nr": "252181",
+        "contracting_authority_name": "Enefit Wind Purtse AS",
+        "estimated_cost": 357900000.0,
+        "main_cpv_id": 4262,
+        "main_cpv_name": "Tuulegeneraatorid"
+      },
+      {
+        "procurement_id": 7855764,
+        "procurement_name": "Kasvajavastased ja immunomoduleerivad ained",
+        "procurement_reference_nr": "284860",
+        "contracting_authority_name": "Tervisekassa",
+        "estimated_cost": 300000000.0,
+        "main_cpv_id": 13651,
+        "main_cpv_name": "Pharmaceutical products"
+      }
+    ],
+    "answer": null,
+    "error": null
+  }
+]

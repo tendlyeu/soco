@@ -1,0 +1,166 @@
+{
+  "test_run_timestamp": "2025-12-04T21:52:34.506015",
+  "total_tests": 3,
+  "passed": 3,
+  "failed": 0,
+  "results": [
+    {
+      "question": "how many tenders are there total",
+      "timestamp": "2025-12-04T21:52:26.972093",
+      "success": true,
+      "sql_query": "SELECT COUNT(*) AS total_tenders FROM estonian_tenders;",
+      "error": null,
+      "dataframe": {
+        "columns": [
+          "total_tenders"
+        ],
+        "rows": [
+          {
+            "total_tenders": 50021
+          }
+        ],
+        "row_count": 1,
+        "shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "question": "show me the user count over time",
+      "timestamp": "2025-12-04T21:52:29.008559",
+      "success": true,
+      "sql_query": "SELECT DATE_TRUNC('month', created_at) AS month, COUNT(*) AS user_count\nFROM users\nGROUP BY DATE_TRUNC('month', created_at)\nORDER BY month;",
+      "error": null,
+      "dataframe": {
+        "columns": [
+          "month",
+          "user_count"
+        ],
+        "rows": [
+          {
+            "month": "2025-10-01",
+            "user_count": 26
+          },
+          {
+            "month": "2025-11-01",
+            "user_count": 45
+          },
+          {
+            "month": "2025-12-01",
+            "user_count": 51
+          }
+        ],
+        "row_count": 3,
+        "shape": [
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "question": "show me the tenders and cpv codes / sectors with highest value",
+      "timestamp": "2025-12-04T21:52:34.499223",
+      "success": true,
+      "sql_query": "SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;",
+      "error": null,
+      "dataframe": {
+        "columns": [
+          "procurement_id",
+          "procurement_name",
+          "procurement_reference_nr",
+          "main_cpv_id",
+          "main_cpv_name",
+          "estimated_cost"
+        ],
+        "rows": [
+          {
+            "procurement_id": 7804164,
+            "procurement_name": "Rail Baltica Ülemiste-Pärnu, Pärnu–Läti piir põhitrassi projekteerimine ja ehitus (Allianss)",
+            "procurement_reference_nr": "284278",
+            "main_cpv_id": 6211,
+            "main_cpv_name": "Railway construction works",
+            "estimated_cost": 932000000.0
+          },
+          {
+            "procurement_id": 7323924,
+            "procurement_name": "Rail Baltica Tootsi-Pärnu, Pärnu–Läti piir põhitrassi ning Ülemiste–Pärnu põhitrassi pealisehituse projekteerimine ja ehitamine",
+            "procurement_reference_nr": "279428",
+            "main_cpv_id": 6211,
+            "main_cpv_name": "Raudtee ehitustööd",
+            "estimated_cost": 900000000.0
+          },
+          {
+            "procurement_id": 2864512,
+            "procurement_name": "Militaar-ratassõidukid",
+            "procurement_reference_nr": "232502",
+            "main_cpv_id": 5244,
+            "main_cpv_name": "Mootorsõidukid",
+            "estimated_cost": 693000000.0
+          },
+          {
+            "procurement_id": 5841800,
+            "procurement_name": "Toiduvarude ladustamine",
+            "procurement_reference_nr": "263917",
+            "main_cpv_id": 7078,
+            "main_cpv_name": "Hoiu- ja laoteenused",
+            "estimated_cost": 600000000.0
+          },
+          {
+            "procurement_id": 5078820,
+            "procurement_name": "Suurekaliibriline laskemoon (35mm, 40mm alakaliibriline, 155mm)",
+            "procurement_reference_nr": "255992",
+            "main_cpv_id": 9006,
+            "main_cpv_name": "Tulirelvade ja sõjatehnika laskemoon",
+            "estimated_cost": 500000000.0
+          },
+          {
+            "procurement_id": 8790204,
+            "procurement_name": "Droonituvastusseadmete soetus ja paigaldus",
+            "procurement_reference_nr": "294715",
+            "main_cpv_id": 12397,
+            "main_cpv_name": "Luure, seire ja sihtmärgituvastus",
+            "estimated_cost": 460000000.0
+          },
+          {
+            "procurement_id": 7147692,
+            "procurement_name": "Varitseva õhuründemoona raamleping",
+            "procurement_reference_nr": "277491",
+            "main_cpv_id": 9005,
+            "main_cpv_name": "Ammunition",
+            "estimated_cost": 400000000.0
+          },
+          {
+            "procurement_id": 4472928,
+            "procurement_name": "Sopi tuulepargi kompleksi ja Tootsi tuulepargi tuulikute tarne, ehitus ning hooldus",
+            "procurement_reference_nr": "249603",
+            "main_cpv_id": 4262,
+            "main_cpv_name": "Tuulegeneraatorid",
+            "estimated_cost": 357900000.0
+          },
+          {
+            "procurement_id": 4725760,
+            "procurement_name": "Sopi tuulepargi kompleksi ja Tootsi tuulepargi tuulikute tarne, ehitus ning hooldus",
+            "procurement_reference_nr": "252181",
+            "main_cpv_id": 4262,
+            "main_cpv_name": "Tuulegeneraatorid",
+            "estimated_cost": 357900000.0
+          },
+          {
+            "procurement_id": 7855764,
+            "procurement_name": "Kasvajavastased ja immunomoduleerivad ained",
+            "procurement_reference_nr": "284860",
+            "main_cpv_id": 13651,
+            "main_cpv_name": "Pharmaceutical products",
+            "estimated_cost": 300000000.0
+          }
+        ],
+        "row_count": 10,
+        "shape": [
+          10,
+          6
+        ]
+      }
+    }
+  ]
+}

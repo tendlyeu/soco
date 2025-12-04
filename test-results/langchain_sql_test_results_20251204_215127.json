@@ -1,0 +1,192 @@
+{
+  "test_run_timestamp": "2025-12-04T21:51:27.604768",
+  "total_tests": 3,
+  "passed": 2,
+  "failed": 1,
+  "results": [
+    {
+      "question": "how many tenders are there total",
+      "timestamp": "2025-12-04T21:51:22.808604",
+      "success": "SELECT COUNT(*) AS total_tenders FROM estonian_tenders;",
+      "sql_query": "SELECT COUNT(*) AS total_tenders FROM estonian_tenders;",
+      "error": null,
+      "dataframe": {
+        "columns": [
+          "total_tenders"
+        ],
+        "rows": [
+          {
+            "total_tenders": 50021
+          }
+        ],
+        "row_count": 1,
+        "shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "question": "show me the user count over time",
+      "timestamp": "2025-12-04T21:51:24.311230",
+      "success": "SELECT DATE_TRUNC('day', created_at) AS registration_date, COUNT(*) AS user_count\nFROM users\nGROUP BY DATE_TRUNC('day', created_at)\nORDER BY registration_date;",
+      "sql_query": "SELECT DATE_TRUNC('day', created_at) AS registration_date, COUNT(*) AS user_count\nFROM users\nGROUP BY DATE_TRUNC('day', created_at)\nORDER BY registration_date;",
+      "error": null,
+      "dataframe": {
+        "columns": [
+          "registration_date",
+          "user_count"
+        ],
+        "rows": [
+          {
+            "registration_date": "2025-10-21",
+            "user_count": 7
+          },
+          {
+            "registration_date": "2025-10-22",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-10-23",
+            "user_count": 5
+          },
+          {
+            "registration_date": "2025-10-24",
+            "user_count": 4
+          },
+          {
+            "registration_date": "2025-10-25",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-10-26",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-10-27",
+            "user_count": 2
+          },
+          {
+            "registration_date": "2025-10-28",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-10-30",
+            "user_count": 3
+          },
+          {
+            "registration_date": "2025-10-31",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-11-02",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-11-03",
+            "user_count": 4
+          },
+          {
+            "registration_date": "2025-11-04",
+            "user_count": 3
+          },
+          {
+            "registration_date": "2025-11-05",
+            "user_count": 5
+          },
+          {
+            "registration_date": "2025-11-06",
+            "user_count": 8
+          },
+          {
+            "registration_date": "2025-11-07",
+            "user_count": 3
+          },
+          {
+            "registration_date": "2025-11-10",
+            "user_count": 4
+          },
+          {
+            "registration_date": "2025-11-11",
+            "user_count": 2
+          },
+          {
+            "registration_date": "2025-11-12",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-11-13",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-11-14",
+            "user_count": 2
+          },
+          {
+            "registration_date": "2025-11-18",
+            "user_count": 2
+          },
+          {
+            "registration_date": "2025-11-19",
+            "user_count": 3
+          },
+          {
+            "registration_date": "2025-11-21",
+            "user_count": 2
+          },
+          {
+            "registration_date": "2025-11-25",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-11-27",
+            "user_count": 2
+          },
+          {
+            "registration_date": "2025-11-28",
+            "user_count": 1
+          },
+          {
+            "registration_date": "2025-12-02",
+            "user_count": 34
+          },
+          {
+            "registration_date": "2025-12-03",
+            "user_count": 9
+          },
+          {
+            "registration_date": "2025-12-04",
+            "user_count": 8
+          }
+        ],
+        "row_count": 30,
+        "shape": [
+          30,
+          2
+        ]
+      }
+    },
+    {
+      "question": "show me the tenders and cpv codes / sectors with highest value",
+      "timestamp": "2025-12-04T21:51:27.604193",
+      "success": false,
+      "sql_query": "SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost, \n    etd.currency\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;",
+      "error": "SQL execution failed: (psycopg2.errors.UndefinedColumn) column etd.currency does not exist\nLINE 8:     etd.currency\n            ^\n\n[SQL: SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost, \n    etd.currency\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+      "dataframe": {
+        "columns": [
+          "Error"
+        ],
+        "rows": [
+          {
+            "Error": "SQL execution failed: SQL execution failed: (psycopg2.errors.UndefinedColumn) column etd.currency does not exist\nLINE 8:     etd.currency\n            ^\n\n[SQL: SELECT \n    et.procurement_id, \n    et.procurement_name, \n    et.procurement_reference_nr, \n    et.main_cpv_id, \n    et.main_cpv_name, \n    etd.estimated_cost, \n    etd.currency\nFROM \n    estonian_tenders et\nJOIN \n    estonian_tender_details etd ON et.procurement_id = etd.procurement_id\nWHERE \n    etd.estimated_cost IS NOT NULL\nORDER BY \n    etd.estimated_cost DESC\nLIMIT 10;]\n(Background on this error at: https://sqlalche.me/e/20/f405)"
+          }
+        ],
+        "row_count": 1,
+        "shape": [
+          1,
+          1
+        ]
+      }
+    }
+  ]
+}

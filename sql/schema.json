@@ -1,0 +1,3563 @@
+{
+  "database_url": "dpg-d30k5s8gjchc73eupg30-a.frankfurt-postgres.render.com/tendlydev",
+  "introspected_at": "2025-12-04T21:01:08.653748",
+  "tables": {
+    "users": {
+      "columns": [
+        {
+          "name": "email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "password_hash",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "company",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "industry",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "country",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "website",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "phone",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_active",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "auth0_sub",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "profile_picture",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "email"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "user_profiles": {
+      "columns": [
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "phone",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "website",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "notification_email",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "notification_sms",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "language",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "timezone",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "user_email"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "onboarding_data": {
+      "columns": [
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "registration_number",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "company_size",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "years_in_business",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "company_description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "services",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "government_experience",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "certifications",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contract_value_min",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contract_value_max",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "notifications_email",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "notifications_sms",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "bidding_frequency",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "onboarding_completed",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "onboarding_step",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "business_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "project_capacity",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "work_locations",
+          "type": "TEXT",
+          "nullable": true,
+          "default": "''::text",
+          "autoincrement": false
+        },
+        {
+          "name": "cpv_codes",
+          "type": "TEXT",
+          "nullable": true,
+          "default": "''::text",
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "user_email"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "contact_messages": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "company",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "subject",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "message",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "subscriptions": {
+      "columns": [
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "plan",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "start_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "end_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "billing_cycle",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "price",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "user_email"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "billing_history": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "subscription_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "amount",
+          "type": "DOUBLE PRECISION",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "billing_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "paid_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "invoice_url",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "company_activities": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('company_activities_id_seq'::regclass)",
+          "autoincrement": true
+        },
+        {
+          "name": "registry_code",
+          "type": "BIGINT",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "emtak_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "activity_description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "nace_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_primary",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "start_date",
+          "type": "DATE",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "end_date",
+          "type": "DATE",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "ix_company_activities_emtak_code",
+          "column_names": [
+            "emtak_code"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_company_activities_is_primary",
+          "column_names": [
+            "is_primary"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_company_activities_nace_code",
+          "column_names": [
+            "nace_code"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_company_activities_registry_code",
+          "column_names": [
+            "registry_code"
+          ],
+          "unique": false
+        }
+      ],
+      "unique_constraints": []
+    },
+    "estonian_tender_results": {
+      "columns": [
+        {
+          "name": "procurement_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('estonian_tender_results_procurement_id_seq'::regclass)",
+          "autoincrement": true
+        },
+        {
+          "name": "winner_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "winner_reg_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contract_cost",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contract_actual_cost",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contract_status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "offer_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "last_scraped",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "procurement_id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "estonian_tender_details": {
+      "columns": [
+        {
+          "name": "procurement_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('estonian_tender_details_procurement_id_seq'::regclass)",
+          "autoincrement": true
+        },
+        {
+          "name": "additional_info",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_url",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_electronic_invoicing",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_electronic_payment",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_joint_procurement",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_central_purchasing",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_full_document_access",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_wto",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_divided_into_parts",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "estimated_cost",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_cost_classified",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "duration_in_months",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contract_start_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_eu_financing",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_contract_renewal",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_green",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "has_social_aspects",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "has_innovative_aspects",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "short_description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "criterion_method",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "framework_agreement_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "max_participants",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_deposit_guarantee_required",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "main_financing_condition",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "submission_deadline",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "submission_opening_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_valid_months",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "opening_place",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_negotiation",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_digital_auction",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "performance_conditions",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_reserved_to_profession",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_staff_qualification_required",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "reference_number",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procedure_type_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_type_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "state_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_electronic_offer",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "publication_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_sector_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_eu_notice",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_over_sum_limit",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "nuts_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "location_additional_info",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "last_scraped",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "liable_person_id",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "liable_person_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_sum_limit_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "tender_duration_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "can_change_parts",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": "false",
+          "autoincrement": false
+        },
+        {
+          "name": "show_cost",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": "true",
+          "autoincrement": false
+        },
+        {
+          "name": "primary_cpv_id",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "primary_cpv_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "primary_cpv_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "languages",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "nuts_codes_json",
+          "type": "TEXT",
+          "nullable": true,
+          "default": "''::text",
+          "autoincrement": false
+        },
+        {
+          "name": "ai_requirements",
+          "type": "TEXT",
+          "nullable": true,
+          "default": "''::text",
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "procurement_id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "tender_form_templates": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "form_type",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "form_structure",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "required_fields",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "optional_fields",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "field_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "processing_status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "processing_error",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "confidence_score",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "last_analyzed",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "filled_form_data": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "generation_task_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "template_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "field_values",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "field_metadata",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_reviewed",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "review_notes",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "approval_status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "last_modified",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "team_members": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "full_name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "occupation",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "cv_file_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "generated_ai_summary",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_active",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "document_generation_tasks": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "progress",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "current_step",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "selected_sections",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "generation_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "form_structures",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "filled_data",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "generated_documents",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "submission_checklist",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "error_message",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "started_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "completed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_file_name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": "''::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "context_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": "'none'::character varying",
+          "autoincrement": false
+        },
+        {
+          "name": "generated_file_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "saved_tenders": {
+      "columns": [
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_authority",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_value",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "submission_deadline",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "cpv_code",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "cpv_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_notes",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_tags",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_active",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "reminder_set",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "saved_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "user_email",
+        "tender_id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "companies": {
+      "columns": [
+        {
+          "name": "registry_code",
+          "type": "BIGINT",
+          "nullable": false,
+          "default": "nextval('companies_registry_code_seq'::regclass)",
+          "autoincrement": true
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "legal_form",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "vat_number",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status_text",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_active",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "registration_date",
+          "type": "DATE",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "deletion_date",
+          "type": "DATE",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "address",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "city",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "county",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "postal_code",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "country",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "capital_amount",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "capital_currency",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "employee_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "phone",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "website",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "registry_code"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "ix_companies_city",
+          "column_names": [
+            "city"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_county",
+          "column_names": [
+            "county"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_is_active",
+          "column_names": [
+            "is_active"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_legal_form",
+          "column_names": [
+            "legal_form"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_name",
+          "column_names": [
+            "name"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_registration_date",
+          "column_names": [
+            "registration_date"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_status",
+          "column_names": [
+            "status"
+          ],
+          "unique": false
+        },
+        {
+          "name": "ix_companies_vat_number",
+          "column_names": [
+            "vat_number"
+          ],
+          "unique": false
+        }
+      ],
+      "unique_constraints": []
+    },
+    "password_reset_tokens": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "token",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "expires_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "used",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "password_reset_tokens_token_key",
+          "column_names": [
+            "token"
+          ],
+          "unique": true
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "password_reset_tokens_token_key",
+          "column_names": [
+            "token"
+          ]
+        }
+      ]
+    },
+    "tender_matches": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "task_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "match_score",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "match_category",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "confidence",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "key_reason",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "action",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_authority",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_value",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "days_until_deadline",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "submission_deadline",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "cpv_code",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "cpv_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "matching_results": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "task_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "total_matches",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "perfect_matches",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "strong_matches",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "moderate_matches",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "weak_matches",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "total_tenders_analyzed",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "analysis_timestamp",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "company_profile_snapshot",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "recommendations",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "insights",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "matching_results_task_id_key",
+          "column_names": [
+            "task_id"
+          ],
+          "unique": true
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "matching_results_task_id_key",
+          "column_names": [
+            "task_id"
+          ]
+        }
+      ]
+    },
+    "matching_tasks": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "task_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "progress",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "current_step",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "total_steps",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "completed_steps",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "results",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "error_message",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "started_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "completed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "estonian_tender_documents": {
+      "columns": [
+        {
+          "name": "tender_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_doc_old_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_size",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_subtype",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "date_created",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "temp_url_endpoint",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "api_download_url",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "web_url",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_doc_id",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "version_id",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_summary",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "downloaded",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "processed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_required",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "tender_id",
+        "procurement_doc_old_id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "estonian_tenders": {
+      "columns": [
+        {
+          "name": "procurement_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": "nextval('estonian_tenders_procurement_id_seq'::regclass)",
+          "autoincrement": true
+        },
+        {
+          "name": "procurement_reference_nr",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contracting_authority_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_process_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "short_description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_e_procurement",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "main_cpv_id",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "main_cpv_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_procurement_multi_stage",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "proc_process_reveal_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "proc_process_submit_date",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_green_procurement",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_suspended",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_has_parts",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "notices_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "contracts_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "disputes_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "procurement_start_basis",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "last_scraped",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "procurement_id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "document_review_issues": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "review_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "severity",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "category",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "page_number",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "section_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "line_start",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "line_end",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "original_text",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "suggested_text",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "requirement_reference",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_action",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_notes",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "resolved_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_confidence",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "can_auto_fix",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "auto_fix_applied",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "display_order",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "document_review_requirements": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "review_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "requirement_name",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "requirement_ref",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_mandatory",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status_reason",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "page_found",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "display_order",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "document_reviews": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_name",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_size",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "document_pages",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "overall_score",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "compliance_score",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "completeness_score",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "quality_score",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "critical_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "high_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "medium_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "low_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "total_issues",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "progress",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "current_step",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "error_message",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_confidence",
+          "type": "DOUBLE PRECISION",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_summary",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_recommendations",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "requirements_met",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "requirements_total",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "auto_fixable_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "auto_fixes_applied",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "started_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "completed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "documents_info",
+          "type": "JSON",
+          "nullable": true,
+          "default": "'[]'::json",
+          "autoincrement": false
+        },
+        {
+          "name": "missing_documents",
+          "type": "JSON",
+          "nullable": true,
+          "default": "'[]'::json",
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "tender_chat_history": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "session_id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_message",
+          "type": "TEXT",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_response",
+          "type": "TEXT",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "unique_constraints": []
+    },
+    "files": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "user_email",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "filename",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_size",
+          "type": "INTEGER",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "mime_type",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_hash",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "gcs_bucket",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "gcs_path",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "gcs_url",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_type",
+          "type": "VARCHAR",
+          "nullable": false,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_category",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "related_entity_type",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "related_entity_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tender_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "upload_status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "processing_status",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_processed",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_summary",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "ai_metadata",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_public",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "access_level",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "expires_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "version",
+          "type": "INTEGER",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "parent_file_id",
+          "type": "VARCHAR",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "tags",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "file_metadata",
+          "type": "JSON",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "last_accessed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "is_deleted",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        },
+        {
+          "name": "deleted_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "default": null,
+          "autoincrement": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "files_gcs_path_key",
+          "column_names": [
+            "gcs_path"
+          ],
+          "unique": true
+        }
+      ],
+      "unique_constraints": [
+        {
+          "name": "files_gcs_path_key",
+          "column_names": [
+            "gcs_path"
+          ]
+        }
+      ]
+    }
+  }
+}
