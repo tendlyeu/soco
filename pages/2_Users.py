@@ -47,19 +47,20 @@ def load_schema():
     with open(schema_path, 'r') as f:
         return json.load(f)
 
-# Get cumulative users over time
+# Get cumulative users over time (monthly)
 @st.cache_data(ttl=300)  # Cache for 5 minutes
 def get_cumulative_users():
-    """Get cumulative user count over time."""
+    """Get cumulative user count over time by month."""
     engine = get_db_engine()
     query = text("""
         SELECT 
-            DATE(created_at) as date,
-            COUNT(*) OVER (ORDER BY DATE(created_at)) as cumulative_users
+            DATE_TRUNC('month', created_at) AS month,
+            COUNT(*) AS new_users,
+            SUM(COUNT(*)) OVER (ORDER BY DATE_TRUNC('month', created_at)) AS cumulative_users
         FROM users
         WHERE created_at IS NOT NULL
-        GROUP BY DATE(created_at)
-        ORDER BY date
+        GROUP BY DATE_TRUNC('month', created_at)
+        ORDER BY month
     """)
     
     with engine.connect() as conn:
@@ -101,8 +102,8 @@ try:
         st.warning("⚠️ No user data found")
         st.stop()
     
-    # Convert date column to datetime
-    cumulative_df['date'] = pd.to_datetime(cumulative_df['date'])
+    # Convert date columns to datetime
+    cumulative_df['month'] = pd.to_datetime(cumulative_df['month'])
     weekly_df['week_start'] = pd.to_datetime(weekly_df['week_start'])
     
     # Display summary stats
@@ -126,14 +127,14 @@ try:
     
     st.divider()
     
-    # Chart 1: Cumulative Users Over Time
+    # Chart 1: Cumulative Users Over Time (Monthly)
     st.subheader("📈 Cumulative Users Over Time")
     
     fig_cumulative = go.Figure()
     fig_cumulative.add_trace(go.Scatter(
-        x=cumulative_df['date'],
+        x=cumulative_df['month'],
         y=cumulative_df['cumulative_users'],
-        mode='lines',
+        mode='lines+markers',
         fill='tozeroy',
         name='Cumulative Users',
         line=dict(color='#1f77b4', width=2),
@@ -141,8 +142,8 @@ try:
     ))
     
     fig_cumulative.update_layout(
-        title="Cumulative User Growth",
-        xaxis_title="Date",
+        title="Cumulative User Growth (Monthly)",
+        xaxis_title="Month",
         yaxis_title="Cumulative Users",
         hovermode='x unified',
         height=400,
