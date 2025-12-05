@@ -30,5 +30,89 @@
     ],
     "answer": null,
     "error": null
+  },
+  {
+    "session_id": "dcabfa96-9475-4d13-8dd6-62e923e774c1",
+    "timestamp": "2025-12-05T18:06:50.747256",
+    "question": "can you give me a number of all tenders posted in weekly buckets over past 3 month over time",
+    "sql_query": "SELECT \n    DATE_TRUNC('week', publication_date) AS week_start,\n    COUNT(*) AS tender_count\nFROM estonian_tender_details\nWHERE publication_date >= CURRENT_DATE - INTERVAL '3 months'\nGROUP BY DATE_TRUNC('week', publication_date)\nORDER BY week_start DESC;",
+    "row_count": 0,
+    "has_dataframe": false,
+    "dataframe_columns": [],
+    "dataframe_records": [],
+    "answer": null,
+    "error": null
+  },
+  {
+    "session_id": "dcabfa96-9475-4d13-8dd6-62e923e774c1",
+    "timestamp": "2025-12-05T18:07:22.554719",
+    "question": "can you give me a number of all estonian tenders posted over last 3 months",
+    "sql_query": "SELECT COUNT(*) AS total_tenders\nFROM estonian_tenders\nWHERE created_at >= CURRENT_DATE - INTERVAL '3 months';",
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "total_tenders"
+    ],
+    "dataframe_records": [
+      {
+        "total_tenders": 50059
+      }
+    ],
+    "answer": null,
+    "error": null
+  },
+  {
+    "session_id": "dcabfa96-9475-4d13-8dd6-62e923e774c1",
+    "timestamp": "2025-12-05T18:07:33.177620",
+    "question": "can you give me a number of all estonian tenders records posted over last 3 months",
+    "sql_query": "SELECT COUNT(*) AS total_tenders\nFROM estonian_tenders\nWHERE created_at >= CURRENT_DATE - INTERVAL '3 months';",
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "total_tenders"
+    ],
+    "dataframe_records": [
+      {
+        "total_tenders": 50059
+      }
+    ],
+    "answer": null,
+    "error": null
+  },
+  {
+    "session_id": "dcabfa96-9475-4d13-8dd6-62e923e774c1",
+    "timestamp": "2025-12-05T18:08:37.544512",
+    "question": "can you give me a number of all estonian tenders details records posted over last 3 months",
+    "sql_query": "SELECT COUNT(*) \nFROM estonian_tender_details \nWHERE publication_date >= CURRENT_DATE - INTERVAL '3 months';",
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "count"
+    ],
+    "dataframe_records": [
+      {
+        "count": 0
+      }
+    ],
+    "answer": null,
+    "error": null
+  },
+  {
+    "session_id": "dcabfa96-9475-4d13-8dd6-62e923e774c1",
+    "timestamp": "2025-12-05T18:09:09.929483",
+    "question": "can you give me a number of all estonian tenders details records posted over last 3 months",
+    "sql_query": "SELECT COUNT(*) \nFROM estonian_tender_details \nWHERE publication_date >= CURRENT_DATE - INTERVAL '3 months';",
+    "row_count": 1,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "count"
+    ],
+    "dataframe_records": [
+      {
+        "count": 0
+      }
+    ],
+    "answer": null,
+    "error": null
   }
 ]

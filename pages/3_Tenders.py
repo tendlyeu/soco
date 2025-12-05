@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 import json
+from datetime import date, timedelta
 
 # Load environment variables
 load_dotenv()
@@ -116,6 +117,54 @@ def get_weekly_new_tenders(start_date=None, end_date=None, cpv_id=None, cpv_name
     return df
 
 
+# Get weekly tender amounts (EUR) with filters
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def get_weekly_tender_amounts(start_date=None, end_date=None, cpv_id=None, cpv_name=None):
+    """
+    Get weekly tender amounts in EUR with optional filters.
+    Joins estonian_tenders with estonian_tender_details to get estimated_cost.
+    Filters out NULL amounts.
+    """
+    engine = get_db_engine()
+    
+    # Build WHERE clause
+    where_conditions = [
+        "t.created_at IS NOT NULL",
+        "d.estimated_cost IS NOT NULL"
+    ]
+    
+    if start_date:
+        where_conditions.append(f"DATE(t.created_at) >= '{start_date}'")
+    
+    if end_date:
+        where_conditions.append(f"DATE(t.created_at) <= '{end_date}'")
+    
+    if cpv_id:
+        where_conditions.append(f"t.main_cpv_id = {cpv_id}")
+    
+    if cpv_name:
+        where_conditions.append(f"t.main_cpv_name ILIKE '%{cpv_name}%'")
+    
+    where_clause = " AND ".join(where_conditions)
+    
+    query = text(f"""
+        SELECT 
+            DATE_TRUNC('week', t.created_at)::date as week_start,
+            SUM(d.estimated_cost) as total_amount_eur,
+            COUNT(*) as tender_count
+        FROM estonian_tenders t
+        JOIN estonian_tender_details d ON t.procurement_id = d.procurement_id
+        WHERE {where_clause}
+        GROUP BY DATE_TRUNC('week', t.created_at)
+        ORDER BY week_start
+    """)
+    
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn)
+    
+    return df
+
+
 # Main content
 try:
     engine = get_db_engine()
@@ -125,12 +174,14 @@ try:
     with st.sidebar:
         st.header("🔍 Filters")
         
-        # Date range filter
+        # Date range filter (default to past 2 months)
         st.subheader("Date Range")
+        default_start = date.today() - timedelta(days=60)
+        
         date_col1, date_col2 = st.columns(2)
         
         with date_col1:
-            start_date = st.date_input("Start Date", value=None)
+            start_date = st.date_input("Start Date", value=default_start)
         
         with date_col2:
             end_date = st.date_input("End Date", value=None)
@@ -171,6 +222,13 @@ try:
     # Get data with filters
     with st.spinner("Loading tenders data..."):
         tenders_df = get_weekly_new_tenders(
+            start_date=start_date,
+            end_date=end_date,
+            cpv_id=cpv_id,
+            cpv_name=cpv_name
+        )
+        
+        amounts_df = get_weekly_tender_amounts(
             start_date=start_date,
             end_date=end_date,
             cpv_id=cpv_id,
@@ -244,6 +302,50 @@ try:
     
     st.plotly_chart(fig_weekly, use_container_width=True)
     
+    # Chart 2: Weekly Tender Amounts in EUR (Bar Chart)
+    st.divider()
+    st.subheader("💶 Weekly Tender Amounts (EUR)")
+    st.caption(f"Debug: amounts_df has {len(amounts_df)} rows")
+    
+    if not amounts_df.empty:
+        amounts_df['week_start'] = pd.to_datetime(amounts_df['week_start'])
+        
+        fig_amounts = go.Figure()
+        fig_amounts.add_trace(go.Bar(
+            x=amounts_df['week_start'],
+            y=amounts_df['total_amount_eur'],
+            name='Weekly Amount (EUR)',
+            marker_color='#2ca02c',
+            hovertemplate='Week: %{x}<br>Amount: €%{y:,.0f}<extra></extra>'
+        ))
+        
+        fig_amounts.update_layout(
+            title="Weekly Tender Amounts (EUR)",
+            xaxis_title="Week Starting",
+            yaxis_title="Total Amount (EUR)",
+            hovermode='x unified',
+            height=400,
+            template='plotly_white',
+            bargap=0.2,
+            yaxis_tickformat=',.0f'
+        )
+        
+        st.plotly_chart(fig_amounts, use_container_width=True)
+        
+        # Show summary stats for amounts
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            total_amount = amounts_df['total_amount_eur'].sum()
+            st.metric("Total Amount (EUR)", f"€{total_amount:,.0f}")
+        with col2:
+            avg_weekly_amount = amounts_df['total_amount_eur'].mean()
+            st.metric("Avg Weekly Amount", f"€{avg_weekly_amount:,.0f}")
+        with col3:
+            tenders_with_amounts = amounts_df['tender_count'].sum()
+            st.metric("Tenders with Amounts", f"{tenders_with_amounts:,}")
+    else:
+        st.info("ℹ️ No tender amount data available for the selected filters")
+    
     # Chart 3: New Tenders by CPV Code (if no CPV filter applied)
     if not cpv_id:
         st.divider()
@@ -276,6 +378,10 @@ try:
     with st.expander("📋 View Raw Data"):
         st.write("**Weekly New Tenders Data**")
         st.dataframe(weekly_tenders, use_container_width=True)
+        
+        if not amounts_df.empty:
+            st.write("**Weekly Tender Amounts (EUR)**")
+            st.dataframe(amounts_df, use_container_width=True)
         
         if not cpv_id:
             st.write("**Tenders by CPV Code**")
