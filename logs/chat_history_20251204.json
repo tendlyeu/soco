@@ -337,5 +337,172 @@
     ],
     "answer": null,
     "error": null
+  },
+  {
+    "session_id": "f311851f-447e-4c0f-818a-be5d21e37c30",
+    "timestamp": "2025-12-04T22:07:38.392730",
+    "question": "show me cumulative user count over time",
+    "sql_query": "SELECT \n    DATE_TRUNC('day', created_at) AS registration_date,\n    COUNT(*) AS daily_new_users,\n    SUM(COUNT(*)) OVER (ORDER BY DATE_TRUNC('day', created_at)) AS cumulative_users\nFROM users\nGROUP BY DATE_TRUNC('day', created_at)\nORDER BY registration_date;",
+    "row_count": 30,
+    "has_dataframe": true,
+    "dataframe_columns": [
+      "registration_date",
+      "daily_new_users",
+      "cumulative_users"
+    ],
+    "dataframe_records": [
+      {
+        "registration_date": "2025-10-21",
+        "daily_new_users": 7,
+        "cumulative_users": 7.0
+      },
+      {
+        "registration_date": "2025-10-22",
+        "daily_new_users": 1,
+        "cumulative_users": 8.0
+      },
+      {
+        "registration_date": "2025-10-23",
+        "daily_new_users": 5,
+        "cumulative_users": 13.0
+      },
+      {
+        "registration_date": "2025-10-24",
+        "daily_new_users": 4,
+        "cumulative_users": 17.0
+      },
+      {
+        "registration_date": "2025-10-25",
+        "daily_new_users": 1,
+        "cumulative_users": 18.0
+      },
+      {
+        "registration_date": "2025-10-26",
+        "daily_new_users": 1,
+        "cumulative_users": 19.0
+      },
+      {
+        "registration_date": "2025-10-27",
+        "daily_new_users": 2,
+        "cumulative_users": 21.0
+      },
+      {
+        "registration_date": "2025-10-28",
+        "daily_new_users": 1,
+        "cumulative_users": 22.0
+      },
+      {
+        "registration_date": "2025-10-30",
+        "daily_new_users": 3,
+        "cumulative_users": 25.0
+      },
+      {
+        "registration_date": "2025-10-31",
+        "daily_new_users": 1,
+        "cumulative_users": 26.0
+      },
+      {
+        "registration_date": "2025-11-02",
+        "daily_new_users": 1,
+        "cumulative_users": 27.0
+      },
+      {
+        "registration_date": "2025-11-03",
+        "daily_new_users": 4,
+        "cumulative_users": 31.0
+      },
+      {
+        "registration_date": "2025-11-04",
+        "daily_new_users": 3,
+        "cumulative_users": 34.0
+      },
+      {
+        "registration_date": "2025-11-05",
+        "daily_new_users": 5,
+        "cumulative_users": 39.0
+      },
+      {
+        "registration_date": "2025-11-06",
+        "daily_new_users": 8,
+        "cumulative_users": 47.0
+      },
+      {
+        "registration_date": "2025-11-07",
+        "daily_new_users": 3,
+        "cumulative_users": 50.0
+      },
+      {
+        "registration_date": "2025-11-10",
+        "daily_new_users": 4,
+        "cumulative_users": 54.0
+      },
+      {
+        "registration_date": "2025-11-11",
+        "daily_new_users": 2,
+        "cumulative_users": 56.0
+      },
+      {
+        "registration_date": "2025-11-12",
+        "daily_new_users": 1,
+        "cumulative_users": 57.0
+      },
+      {
+        "registration_date": "2025-11-13",
+        "daily_new_users": 1,
+        "cumulative_users": 58.0
+      },
+      {
+        "registration_date": "2025-11-14",
+        "daily_new_users": 2,
+        "cumulative_users": 60.0
+      },
+      {
+        "registration_date": "2025-11-18",
+        "daily_new_users": 2,
+        "cumulative_users": 62.0
+      },
+      {
+        "registration_date": "2025-11-19",
+        "daily_new_users": 3,
+        "cumulative_users": 65.0
+      },
+      {
+        "registration_date": "2025-11-21",
+        "daily_new_users": 2,
+        "cumulative_users": 67.0
+      },
+      {
+        "registration_date": "2025-11-25",
+        "daily_new_users": 1,
+        "cumulative_users": 68.0
+      },
+      {
+        "registration_date": "2025-11-27",
+        "daily_new_users": 2,
+        "cumulative_users": 70.0
+      },
+      {
+        "registration_date": "2025-11-28",
+        "daily_new_users": 1,
+        "cumulative_users": 71.0
+      },
+      {
+        "registration_date": "2025-12-02",
+        "daily_new_users": 34,
+        "cumulative_users": 105.0
+      },
+      {
+        "registration_date": "2025-12-03",
+        "daily_new_users": 9,
+        "cumulative_users": 114.0
+      },
+      {
+        "registration_date": "2025-12-04",
+        "daily_new_users": 8,
+        "cumulative_users": 122.0
+      }
+    ],
+    "answer": null,
+    "error": null
   }
 ]
