@@ -67,11 +67,11 @@ def get_cpv_codes():
     
     return df
 
-# Get new tenders data with filters
+# Get weekly new tenders data with filters
 @st.cache_data(ttl=300)  # Cache for 5 minutes
-def get_new_tenders(start_date=None, end_date=None, cpv_id=None, cpv_name=None):
+def get_weekly_new_tenders(start_date=None, end_date=None, cpv_id=None, cpv_name=None):
     """
-    Get new tenders data with optional filters.
+    Get weekly new tenders data with optional filters.
     
     Args:
         start_date: Start date filter (datetime or None)
@@ -100,14 +100,14 @@ def get_new_tenders(start_date=None, end_date=None, cpv_id=None, cpv_name=None):
     
     query = text(f"""
         SELECT 
-            DATE(created_at) as date,
+            DATE_TRUNC('week', created_at)::date as week_start,
             COUNT(*) as new_tenders,
             main_cpv_id,
             main_cpv_name
         FROM estonian_tenders
         WHERE {where_clause}
-        GROUP BY DATE(created_at), main_cpv_id, main_cpv_name
-        ORDER BY date, main_cpv_name
+        GROUP BY DATE_TRUNC('week', created_at), main_cpv_id, main_cpv_name
+        ORDER BY week_start, main_cpv_name
     """)
     
     with engine.connect() as conn:
@@ -115,42 +115,6 @@ def get_new_tenders(start_date=None, end_date=None, cpv_id=None, cpv_name=None):
     
     return df
 
-# Get cumulative new tenders
-@st.cache_data(ttl=300)
-def get_cumulative_tenders(start_date=None, end_date=None, cpv_id=None, cpv_name=None):
-    """Get cumulative new tenders count."""
-    engine = get_db_engine()
-    
-    where_conditions = ["created_at IS NOT NULL"]
-    
-    if start_date:
-        where_conditions.append(f"DATE(created_at) >= '{start_date}'")
-    
-    if end_date:
-        where_conditions.append(f"DATE(created_at) <= '{end_date}'")
-    
-    if cpv_id:
-        where_conditions.append(f"main_cpv_id = {cpv_id}")
-    
-    if cpv_name:
-        where_conditions.append(f"main_cpv_name ILIKE '%{cpv_name}%'")
-    
-    where_clause = " AND ".join(where_conditions)
-    
-    query = text(f"""
-        SELECT 
-            DATE(created_at) as date,
-            COUNT(*) OVER (ORDER BY DATE(created_at)) as cumulative_tenders
-        FROM estonian_tenders
-        WHERE {where_clause}
-        GROUP BY DATE(created_at)
-        ORDER BY date
-    """)
-    
-    with engine.connect() as conn:
-        df = pd.read_sql(query, conn)
-    
-    return df
 
 # Main content
 try:
@@ -206,50 +170,42 @@ try:
     
     # Get data with filters
     with st.spinner("Loading tenders data..."):
-        tenders_df = get_new_tenders(
-            start_date=start_date,
-            end_date=end_date,
-            cpv_id=cpv_id,
-            cpv_name=cpv_name
-        )
-        
-        cumulative_df = get_cumulative_tenders(
+        tenders_df = get_weekly_new_tenders(
             start_date=start_date,
             end_date=end_date,
             cpv_id=cpv_id,
             cpv_name=cpv_name
         )
     
-    if tenders_df.empty or cumulative_df.empty:
+    if tenders_df.empty:
         st.warning("⚠️ No tenders data found for the selected filters")
         st.stop()
     
     # Convert date column to datetime
-    tenders_df['date'] = pd.to_datetime(tenders_df['date'])
-    cumulative_df['date'] = pd.to_datetime(cumulative_df['date'])
+    tenders_df['week_start'] = pd.to_datetime(tenders_df['week_start'])
     
-    # Aggregate daily new tenders (sum across CPV codes if multiple selected)
-    daily_tenders = tenders_df.groupby('date')['new_tenders'].sum().reset_index()
-    daily_tenders.columns = ['date', 'new_tenders']
+    # Aggregate weekly new tenders (sum across CPV codes if multiple selected)
+    weekly_tenders = tenders_df.groupby('week_start')['new_tenders'].sum().reset_index()
+    weekly_tenders.columns = ['week_start', 'new_tenders']
     
     # Display summary stats
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        total_tenders = cumulative_df['cumulative_tenders'].iloc[-1] if not cumulative_df.empty else 0
+        total_tenders = weekly_tenders['new_tenders'].sum()
         st.metric("Total New Tenders", f"{total_tenders:,}")
     
     with col2:
-        total_new_today = daily_tenders['new_tenders'].iloc[-1] if not daily_tenders.empty else 0
-        st.metric("New Tenders Today", f"{total_new_today:,}")
+        total_new_this_week = weekly_tenders['new_tenders'].iloc[-1] if not weekly_tenders.empty else 0
+        st.metric("New Tenders This Week", f"{total_new_this_week:,}")
     
     with col3:
-        avg_daily = daily_tenders['new_tenders'].mean() if not daily_tenders.empty else 0
-        st.metric("Avg Daily New Tenders", f"{avg_daily:.1f}")
+        avg_weekly = weekly_tenders['new_tenders'].mean() if not weekly_tenders.empty else 0
+        st.metric("Avg Weekly New Tenders", f"{avg_weekly:.1f}")
     
     with col4:
-        max_daily = daily_tenders['new_tenders'].max() if not daily_tenders.empty else 0
-        st.metric("Max Daily New Tenders", f"{max_daily:,}")
+        max_weekly = weekly_tenders['new_tenders'].max() if not weekly_tenders.empty else 0
+        st.metric("Max Weekly New Tenders", f"{max_weekly:,}")
     
     # Show active filters
     if start_date or end_date or cpv_id:
@@ -265,57 +221,28 @@ try:
     
     st.divider()
     
-    # Chart 1: Cumulative New Tenders Over Time
-    st.subheader("📈 Cumulative New Tenders Over Time")
+    # Chart: Weekly New Tenders (Bar Chart)
+    st.subheader("📊 Weekly New Tenders")
     
-    fig_cumulative = go.Figure()
-    fig_cumulative.add_trace(go.Scatter(
-        x=cumulative_df['date'],
-        y=cumulative_df['cumulative_tenders'],
-        mode='lines',
-        fill='tozeroy',
-        name='Cumulative New Tenders',
-        line=dict(color='#ff7f0e', width=2),
-        fillcolor='rgba(255, 127, 14, 0.3)'
+    fig_weekly = go.Figure()
+    fig_weekly.add_trace(go.Bar(
+        x=weekly_tenders['week_start'],
+        y=weekly_tenders['new_tenders'],
+        name='Weekly New Tenders',
+        marker_color='#d62728'
     ))
     
-    fig_cumulative.update_layout(
-        title="Cumulative New Tenders Growth",
-        xaxis_title="Date",
-        yaxis_title="Cumulative New Tenders",
-        hovermode='x unified',
-        height=400,
-        template='plotly_white'
-    )
-    
-    st.plotly_chart(fig_cumulative, use_container_width=True)
-    
-    st.divider()
-    
-    # Chart 2: Daily New Tenders
-    st.subheader("📊 Daily New Tenders (Incremental)")
-    
-    fig_daily = go.Figure()
-    fig_daily.add_trace(go.Scatter(
-        x=daily_tenders['date'],
-        y=daily_tenders['new_tenders'],
-        mode='lines',
-        fill='tozeroy',
-        name='Daily New Tenders',
-        line=dict(color='#d62728', width=2),
-        fillcolor='rgba(214, 39, 40, 0.3)'
-    ))
-    
-    fig_daily.update_layout(
-        title="Daily New Tenders",
-        xaxis_title="Date",
+    fig_weekly.update_layout(
+        title="Weekly New Tenders",
+        xaxis_title="Week Starting",
         yaxis_title="New Tenders",
         hovermode='x unified',
         height=400,
-        template='plotly_white'
+        template='plotly_white',
+        bargap=0.2
     )
     
-    st.plotly_chart(fig_daily, use_container_width=True)
+    st.plotly_chart(fig_weekly, use_container_width=True)
     
     # Chart 3: New Tenders by CPV Code (if no CPV filter applied)
     if not cpv_id:
@@ -347,15 +274,8 @@ try:
     
     # Data tables (collapsible)
     with st.expander("📋 View Raw Data"):
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.write("**Cumulative Tenders Data**")
-            st.dataframe(cumulative_df, use_container_width=True)
-        
-        with col2:
-            st.write("**Daily New Tenders Data**")
-            st.dataframe(daily_tenders, use_container_width=True)
+        st.write("**Weekly New Tenders Data**")
+        st.dataframe(weekly_tenders, use_container_width=True)
         
         if not cpv_id:
             st.write("**Tenders by CPV Code**")

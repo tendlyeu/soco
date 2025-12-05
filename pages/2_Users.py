@@ -67,19 +67,19 @@ def get_cumulative_users():
     
     return df
 
-# Get daily new users
+# Get weekly new users
 @st.cache_data(ttl=300)  # Cache for 5 minutes
-def get_daily_new_users():
-    """Get daily new user registrations."""
+def get_weekly_new_users():
+    """Get weekly new user registrations."""
     engine = get_db_engine()
     query = text("""
         SELECT 
-            DATE(created_at) as date,
+            DATE_TRUNC('week', created_at)::date as week_start,
             COUNT(*) as new_users
         FROM users
         WHERE created_at IS NOT NULL
-        GROUP BY DATE(created_at)
-        ORDER BY date
+        GROUP BY DATE_TRUNC('week', created_at)
+        ORDER BY week_start
     """)
     
     with engine.connect() as conn:
@@ -95,15 +95,15 @@ try:
     # Get data
     with st.spinner("Loading user data..."):
         cumulative_df = get_cumulative_users()
-        daily_df = get_daily_new_users()
+        weekly_df = get_weekly_new_users()
     
-    if cumulative_df.empty or daily_df.empty:
+    if cumulative_df.empty or weekly_df.empty:
         st.warning("⚠️ No user data found")
         st.stop()
     
     # Convert date column to datetime
     cumulative_df['date'] = pd.to_datetime(cumulative_df['date'])
-    daily_df['date'] = pd.to_datetime(daily_df['date'])
+    weekly_df['week_start'] = pd.to_datetime(weekly_df['week_start'])
     
     # Display summary stats
     col1, col2, col3, col4 = st.columns(4)
@@ -113,16 +113,16 @@ try:
         st.metric("Total Users", f"{total_users:,}")
     
     with col2:
-        total_new_today = daily_df['new_users'].iloc[-1] if not daily_df.empty else 0
-        st.metric("New Users Today", f"{total_new_today:,}")
+        total_new_this_week = weekly_df['new_users'].iloc[-1] if not weekly_df.empty else 0
+        st.metric("New Users This Week", f"{total_new_this_week:,}")
     
     with col3:
-        avg_daily = daily_df['new_users'].mean() if not daily_df.empty else 0
-        st.metric("Avg Daily New Users", f"{avg_daily:.1f}")
+        avg_weekly = weekly_df['new_users'].mean() if not weekly_df.empty else 0
+        st.metric("Avg Weekly New Users", f"{avg_weekly:.1f}")
     
     with col4:
-        max_daily = daily_df['new_users'].max() if not daily_df.empty else 0
-        st.metric("Max Daily New Users", f"{max_daily:,}")
+        max_weekly = weekly_df['new_users'].max() if not weekly_df.empty else 0
+        st.metric("Max Weekly New Users", f"{max_weekly:,}")
     
     st.divider()
     
@@ -153,30 +153,28 @@ try:
     
     st.divider()
     
-    # Chart 2: Daily New Users
-    st.subheader("📊 Daily New Users (Incremental)")
+    # Chart 2: Weekly New Users (Bar Chart)
+    st.subheader("📊 Weekly New Users")
     
-    fig_daily = go.Figure()
-    fig_daily.add_trace(go.Scatter(
-        x=daily_df['date'],
-        y=daily_df['new_users'],
-        mode='lines',
-        fill='tozeroy',
-        name='Daily New Users',
-        line=dict(color='#2ca02c', width=2),
-        fillcolor='rgba(44, 160, 44, 0.3)'
+    fig_weekly = go.Figure()
+    fig_weekly.add_trace(go.Bar(
+        x=weekly_df['week_start'],
+        y=weekly_df['new_users'],
+        name='Weekly New Users',
+        marker_color='#2ca02c'
     ))
     
-    fig_daily.update_layout(
-        title="Daily New User Registrations",
-        xaxis_title="Date",
+    fig_weekly.update_layout(
+        title="Weekly New User Registrations",
+        xaxis_title="Week Starting",
         yaxis_title="New Users",
         hovermode='x unified',
         height=400,
-        template='plotly_white'
+        template='plotly_white',
+        bargap=0.2
     )
     
-    st.plotly_chart(fig_daily, use_container_width=True)
+    st.plotly_chart(fig_weekly, use_container_width=True)
     
     # Data tables (collapsible)
     with st.expander("📋 View Raw Data"):
@@ -187,8 +185,8 @@ try:
             st.dataframe(cumulative_df, use_container_width=True)
         
         with col2:
-            st.write("**Daily New Users Data**")
-            st.dataframe(daily_df, use_container_width=True)
+            st.write("**Weekly New Users Data**")
+            st.dataframe(weekly_df, use_container_width=True)
     
 except Exception as e:
     st.error(f"❌ Error loading user data: {str(e)}")
