@@ -37,9 +37,20 @@ class StatusPanel(Static):
 class OutputPanel(Static):
     """Output panel for displaying results."""
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.console = Console()
+        self._content = ""
+    
+    def update(self, content: str = "") -> None:
+        """Update content and store it for retrieval."""
+        self._content = str(content)
+        super().update(content)
+
+    @property
+    def renderable(self) -> str:
+        """Return the current content."""
+        return self._content
     
     def display_result(self, content: str, is_error: bool = False) -> None:
         """Display formatted result."""
@@ -258,6 +269,9 @@ class SocialMediaTUI(App):
             output_panel.update(f"{current}\n{content}")
         else:
             output_panel.update(content)
+        
+        # Scroll to end
+        output_panel.scroll_end(animate=False)
     
     def _display_welcome(self) -> None:
         """Display welcome message."""
