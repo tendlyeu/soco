@@ -17,6 +17,7 @@ from sqlalchemy import create_engine, text
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from utils.summarizer import TenderSummarizer
+from utils.tendly_scraper import scrape_tender, extract_procurement_id
 
 load_dotenv()
 
@@ -143,8 +144,42 @@ def insert_social_post(conn, procurement_id, content, hashtags, doc_url):
     })
 
 
+def process_url(url: str, engine, summarizer, dry_run: bool, verbose: bool):
+    """Scrape a single tendly.eu URL and generate a social post for it."""
+    if verbose:
+        print(f"  Scraping URL: {url}")
+
+    row = scrape_tender(url)
+    pid = row["procurement_id"]
+    title = row.get("procurement_name", "")
+
+    if verbose:
+        print(f"  Scraped tender: {title[:60]}...")
+
+    with engine.connect() as conn:
+        import_tender_source(conn, row)
+
+        tender_dict = build_tender_dict(row)
+        if dry_run:
+            content = f"[DRY RUN] Would generate tweet for: {title[:80]}"
+            hashtags = ["#PublicProcurement", "#Tenders", "#Tendly", "#Estonia"]
+        else:
+            content = summarizer.summarize_for_twitter(tender_dict)
+            hashtags = summarizer.create_hashtags(tender_dict)
+
+        doc_url = url
+        insert_social_post(conn, pid, content, hashtags, doc_url)
+        conn.commit()
+
+    if verbose:
+        print(f"    Tweet ({len(content)} chars): {content[:100]}...")
+
+    print(f"\nDone: 1 generated from URL")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate Twitter content from recent tenders")
+    parser.add_argument("--url", type=str, help="Scrape a single tendly.eu tender URL instead of querying the DB")
     parser.add_argument("--days", type=int, default=7, help="Lookback period in days (default: 7)")
     parser.add_argument("--limit", type=int, default=20, help="Max tenders to process (default: 20)")
     parser.add_argument("--dry-run", action="store_true", help="Skip API calls, generate placeholder content")
@@ -152,10 +187,17 @@ def main():
     args = parser.parse_args()
 
     print("=== Content Generator ===")
-    print(f"Lookback: {args.days} days | Limit: {args.limit} | Dry run: {args.dry_run}")
 
     engine = get_db_engine()
     summarizer = None if args.dry_run else TenderSummarizer()
+
+    # Single-URL mode: scrape and process one tender, then exit
+    if args.url:
+        print(f"Mode: single URL | Dry run: {args.dry_run}")
+        process_url(args.url, engine, summarizer, args.dry_run, args.verbose)
+        return
+
+    print(f"Lookback: {args.days} days | Limit: {args.limit} | Dry run: {args.dry_run}")
 
     rows = fetch_new_tenders(engine, args.days, args.limit, args.verbose)
 

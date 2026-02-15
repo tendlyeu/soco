@@ -45,6 +45,7 @@ def main():
     parser.add_argument("--skip-generate", action="store_true", help="Skip content generation step")
     parser.add_argument("--skip-review", action="store_true", help="Skip interactive review step")
     parser.add_argument("--skip-post", action="store_true", help="Skip posting step")
+    parser.add_argument("--url", type=str, help="Scrape a single tendly.eu tender URL instead of querying the DB")
     parser.add_argument("--dry-run", action="store_true", help="Pass --dry-run to generate and post agents")
     parser.add_argument("--verbose", action="store_true", help="Pass --verbose to all agents")
     args = parser.parse_args()
@@ -54,7 +55,11 @@ def main():
     results = {}
 
     # Agent 1: Generate content
-    gen_cmd = [str(AGENTS_DIR / "generate_content.py"), "--days", str(args.days), "--limit", str(args.limit)]
+    gen_cmd = [str(AGENTS_DIR / "generate_content.py")]
+    if args.url:
+        gen_cmd.extend(["--url", args.url])
+    else:
+        gen_cmd.extend(["--days", str(args.days), "--limit", str(args.limit)])
     if args.dry_run:
         gen_cmd.append("--dry-run")
     if args.verbose:
