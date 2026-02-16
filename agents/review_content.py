@@ -2,7 +2,7 @@
 """
 Agent 2: Interactive Content Reviewer
 Reads draft posts from socode.social_posts, displays tender info and generated
-Twitter content, lets user approve, edit, skip, or reject each draft.
+social media content, lets user approve, edit, skip, or reject each draft.
 """
 import argparse
 import os
@@ -32,6 +32,7 @@ def fetch_drafts(engine):
     query = text("""
         SELECT
             sp.id AS post_id,
+            sp.platform,
             sp.content,
             sp.hashtags,
             sp.document_url,
@@ -80,12 +81,16 @@ def display_draft(draft, index: int, total: int):
         console.print()
         console.print(Panel(desc[:500], title="Description", border_style="dim"))
 
+    platform = draft.get("platform", "twitter")
+    platform_label = "Twitter" if platform == "twitter" else "LinkedIn"
+    max_chars = 280 if platform == "twitter" else 1000
+
     content = draft.get("content", "")
     char_count = draft.get("char_count") or len(content)
-    color = "green" if char_count <= 280 else "red"
+    color = "green" if char_count <= max_chars else "red"
 
     console.print()
-    console.print(Panel(content, title=f"Twitter Content [{char_count} chars]", border_style=color))
+    console.print(Panel(content, title=f"{platform_label} Content [{char_count}/{max_chars} chars]", border_style=color))
 
     hashtags = draft.get("hashtags") or []
     if hashtags:
@@ -120,9 +125,11 @@ def reject_post(conn, post_id):
     """), {"id": post_id})
 
 
-def edit_post(conn, post_id) -> str | None:
-    """Let user edit the Twitter content. Returns new content or None."""
-    console.print("\n[bold yellow]Enter new Twitter content (max 280 chars):[/bold yellow]")
+def edit_post(conn, post_id, platform: str = "twitter") -> str | None:
+    """Let user edit the post content. Returns new content or None."""
+    platform_label = "Twitter" if platform == "twitter" else "LinkedIn"
+    max_chars = 280 if platform == "twitter" else 1000
+    console.print(f"\n[bold yellow]Enter new {platform_label} content (max {max_chars} chars):[/bold yellow]")
     console.print("[dim]Press Enter twice to finish:[/dim]")
 
     lines = []
@@ -142,14 +149,14 @@ def edit_post(conn, post_id) -> str | None:
     """), {"id": post_id, "content": new_content})
 
     char_count = len(new_content)
-    color = "green" if char_count <= 280 else "red"
+    color = "green" if char_count <= max_chars else "red"
     console.print(f"\n[{color}]Updated content ({char_count} chars):[/{color}]")
     console.print(Panel(new_content, border_style=color))
     return new_content
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Review and approve generated Twitter content")
+    parser = argparse.ArgumentParser(description="Review and approve generated social media content")
     parser.add_argument("--verbose", action="store_true", help="Print detailed progress")
     args = parser.parse_args()
 
@@ -189,7 +196,7 @@ def main():
                     break
 
                 elif choice in ("e", "edit"):
-                    edit_post(conn, post_id)
+                    edit_post(conn, post_id, draft.get("platform", "twitter"))
                     conn.commit()
                     continue
 

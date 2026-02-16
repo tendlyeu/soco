@@ -2,7 +2,7 @@
 """
 Agent 1: Content Generator
 Fetches recent tenders from public schema, imports them into socode.tender_sources,
-generates Twitter content via TenderSummarizer, and inserts drafts into socode.social_posts.
+generates Twitter and LinkedIn content via TenderSummarizer, and inserts drafts into socode.social_posts.
 """
 import argparse
 import json
@@ -129,15 +129,16 @@ def build_tender_dict(row) -> dict:
     }
 
 
-def insert_social_post(conn, procurement_id, content, hashtags, doc_url):
+def insert_social_post(conn, procurement_id, content, hashtags, doc_url, platform="twitter"):
     """Insert a draft social post into socode.social_posts."""
     conn.execute(text("""
         INSERT INTO socode.social_posts
             (procurement_id, platform, content, hashtags, document_url, status)
         VALUES
-            (:pid, 'twitter', :content, :hashtags, :doc_url, 'draft')
+            (:pid, :platform, :content, :hashtags, :doc_url, 'draft')
     """), {
         "pid": procurement_id,
+        "platform": platform,
         "content": content,
         "hashtags": hashtags,
         "doc_url": doc_url,
@@ -160,25 +161,39 @@ def process_url(url: str, engine, summarizer, dry_run: bool, verbose: bool):
         import_tender_source(conn, row)
 
         tender_dict = build_tender_dict(row)
+        doc_url = url
+
+        # Generate Twitter content
         if dry_run:
-            content = f"[DRY RUN] Would generate tweet for: {title[:80]}"
+            tw_content = f"[DRY RUN] Would generate tweet for: {title[:80]}"
             hashtags = ["#PublicProcurement", "#Tenders", "#Tendly", "#Estonia"]
         else:
-            content = summarizer.summarize_for_twitter(tender_dict)
+            tw_content = summarizer.summarize_for_twitter(tender_dict)
             hashtags = summarizer.create_hashtags(tender_dict)
 
-        doc_url = url
-        insert_social_post(conn, pid, content, hashtags, doc_url)
+        insert_social_post(conn, pid, tw_content, hashtags, doc_url, platform="twitter")
+
+        if verbose:
+            print(f"    Twitter ({len(tw_content)} chars): {tw_content[:100]}...")
+
+        # Generate LinkedIn content
+        if dry_run:
+            li_content = f"[DRY RUN] Would generate LinkedIn post for: {title[:80]}"
+        else:
+            li_content = summarizer.summarize_for_linkedin(tender_dict)
+
+        insert_social_post(conn, pid, li_content, hashtags, doc_url, platform="linkedin")
+
+        if verbose:
+            print(f"    LinkedIn ({len(li_content)} chars): {li_content[:100]}...")
+
         conn.commit()
 
-    if verbose:
-        print(f"    Tweet ({len(content)} chars): {content[:100]}...")
-
-    print(f"\nDone: 1 generated from URL")
+    print(f"\nDone: 1 tender, 2 posts (Twitter + LinkedIn) generated from URL")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate Twitter content from recent tenders")
+    parser = argparse.ArgumentParser(description="Generate social media content from recent tenders")
     parser.add_argument("--url", type=str, help="Scrape a single tendly.eu tender URL instead of querying the DB")
     parser.add_argument("--days", type=int, default=7, help="Lookback period in days (default: 7)")
     parser.add_argument("--limit", type=int, default=20, help="Max tenders to process (default: 20)")
@@ -218,21 +233,25 @@ def main():
 
                 # Generate content
                 tender_dict = build_tender_dict(row)
-                if args.dry_run:
-                    content = f"[DRY RUN] Would generate tweet for: {title[:80]}"
-                    hashtags = ["#PublicProcurement", "#Tenders", "#Tendly", "#Estonia"]
-                else:
-                    content = summarizer.summarize_for_twitter(tender_dict)
-                    hashtags = summarizer.create_hashtags(tender_dict)
-
                 doc_url = row.get("document_url") or f"https://www.tendly.eu/tenders/{row.get('procurement_reference_nr', '')}"
 
-                # Insert draft post
-                insert_social_post(conn, pid, content, hashtags, doc_url)
+                if args.dry_run:
+                    tw_content = f"[DRY RUN] Would generate tweet for: {title[:80]}"
+                    li_content = f"[DRY RUN] Would generate LinkedIn post for: {title[:80]}"
+                    hashtags = ["#PublicProcurement", "#Tenders", "#Tendly", "#Estonia"]
+                else:
+                    tw_content = summarizer.summarize_for_twitter(tender_dict)
+                    li_content = summarizer.summarize_for_linkedin(tender_dict)
+                    hashtags = summarizer.create_hashtags(tender_dict)
+
+                # Insert draft posts for both platforms
+                insert_social_post(conn, pid, tw_content, hashtags, doc_url, platform="twitter")
+                insert_social_post(conn, pid, li_content, hashtags, doc_url, platform="linkedin")
                 generated += 1
 
                 if args.verbose:
-                    print(f"    Tweet ({len(content)} chars): {content[:100]}...")
+                    print(f"    Twitter ({len(tw_content)} chars): {tw_content[:100]}...")
+                    print(f"    LinkedIn ({len(li_content)} chars): {li_content[:100]}...")
 
             except Exception as e:
                 errors += 1

@@ -37,11 +37,13 @@ def run_agent(name: str, cmd: list[str], skip: bool = False) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the full tender-to-Twitter pipeline")
+    parser = argparse.ArgumentParser(description="Run the full tender-to-social-media pipeline")
     parser.add_argument("--days", type=int, default=7, help="Lookback period for content generation (default: 7)")
     parser.add_argument("--limit", type=int, default=20, help="Max tenders to generate (default: 20)")
-    parser.add_argument("--post-limit", type=int, default=5, help="Max tweets to post (default: 5)")
+    parser.add_argument("--post-limit", type=int, default=5, help="Max posts per platform (default: 5)")
     parser.add_argument("--post-delay", type=int, default=10, help="Seconds between posts (default: 10)")
+    parser.add_argument("--platform", choices=["twitter", "linkedin", "all"], default="all",
+                        help="Platform to post to (default: all)")
     parser.add_argument("--skip-generate", action="store_true", help="Skip content generation step")
     parser.add_argument("--skip-review", action="store_true", help="Skip interactive review step")
     parser.add_argument("--skip-post", action="store_true", help="Skip posting step")
@@ -73,17 +75,18 @@ def main():
     skip_review = args.skip_review or args.dry_run
     results["review"] = run_agent("Content Reviewer", review_cmd, skip=skip_review)
 
-    # Agent 3: Post to Twitter
+    # Agent 3: Post to social media
     post_cmd = [
-        str(AGENTS_DIR / "post_to_twitter.py"),
+        str(AGENTS_DIR / "post_content.py"),
         "--limit", str(args.post_limit),
         "--delay", str(args.post_delay),
+        "--platform", args.platform,
     ]
     if args.dry_run:
         post_cmd.append("--dry-run")
     if args.verbose:
         post_cmd.append("--verbose")
-    results["post"] = run_agent("Twitter Poster", post_cmd, skip=args.skip_post)
+    results["post"] = run_agent("Social Media Poster", post_cmd, skip=args.skip_post)
 
     # Summary
     print(f"\n{'=' * 50}")
