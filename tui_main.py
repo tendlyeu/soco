@@ -3,7 +3,6 @@
 import asyncio
 import sys
 from pathlib import Path
-from dotenv import load_dotenv
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -13,14 +12,8 @@ from tui.app import SocialMediaTUI
 
 async def main():
     """Main entry point."""
-    # Load environment variables
-    env_path = Path(__file__).parent / ".env"
-    if env_path.exists():
-        load_dotenv(env_path)
-    
-    # Create and run app
     app = SocialMediaTUI()
-    await app.run_async()
+    await app.run()
 
 
 if __name__ == "__main__":

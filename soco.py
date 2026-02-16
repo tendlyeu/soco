@@ -65,7 +65,7 @@ COMMANDS = {
     },
     "tui": {
         "script": ROOT / "tui_main.py",
-        "summary": "Launch the Textual TUI for social media posting",
+        "summary": "Launch the interactive TUI for social media posting",
         "usage": "python soco.py tui",
         "options": [],
     },
