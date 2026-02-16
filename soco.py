@@ -63,6 +63,15 @@ COMMANDS = {
             ("--verbose", "Pass --verbose to all agents"),
         ],
     },
+    "run": {
+        "script": AGENTS / "interactive_pipeline.py",
+        "summary": "Interactive pipeline: scrape, generate, review, and post step by step",
+        "usage": "python soco.py run [--dry-run] [--verbose]",
+        "options": [
+            ("--dry-run", "Skip API calls for generation and posting"),
+            ("--verbose", "Print detailed progress"),
+        ],
+    },
     "tui": {
         "script": ROOT / "tui_main.py",
         "summary": "Launch the interactive TUI for social media posting",
@@ -104,7 +113,7 @@ def print_command_help(name: str):
 
 def main():
     if len(sys.argv) < 2:
-        cmd = "tui"
+        cmd = "run"
     elif sys.argv[1] in ("help", "--help", "-h"):
         print_help()
         return
