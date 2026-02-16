@@ -2,159 +2,117 @@
 Social media posting utility using Arcade AI.
 """
 import os
-import requests
 from typing import Dict, Optional, List
 import time
+
+from arcadepy import Arcade
 
 
 class ArcadeSocialPoster:
     """Posts content to social media platforms using Arcade AI."""
-    
+
     def __init__(self, api_key: Optional[str] = None):
         """
         Initialize the poster with Arcade API key.
-        
+
         Args:
             api_key: Arcade API key. If not provided, reads from ARCADE_API_KEY env var.
         """
         self.api_key = api_key or os.getenv('ARCADE_API_KEY')
         if not self.api_key:
             raise ValueError("ARCADE_API_KEY must be provided or set in environment")
-        
-        self.base_url = "https://api.arcade.dev/v1"
-        self.headers = {
-            "Authorization": self.api_key,  # Direct API key, no Bearer prefix
-            "Content-Type": "application/json"
-        }
-        
-        # User credentials for authentication
-        self.user_email = os.getenv('ARCADE_USER_EMAIL')
-        self.user_password = os.getenv('ARCADE_USER_PASSWORD')
+
+        self.client = Arcade(api_key=self.api_key)
         self.user_id = os.getenv('ARCADE_USER_ID')
-    
-    def authorize_user(self) -> Dict:
+
+    def check_auth(self, provider: str) -> Dict:
         """
-        Authorize user with Arcade.
-        
+        Check authorization status for a provider.
+
+        Args:
+            provider: Provider ID (e.g. 'arcade-x', 'arcade-linkedin')
+
         Returns:
-            Authorization response dictionary
+            Authorization status dictionary
         """
-        payload = {
-            "email": self.user_email,
-            "password": self.user_password
-        }
-        
-        # Note: User authorization may need to be handled differently
-        # Check Arcade docs for current auth flow
-        response = requests.post(
-            f"{self.base_url}/auth/authorize",
-            headers=self.headers,
-            json=payload
+        auth = self.client.auth.start(
+            user_id=self.user_id,
+            provider=provider
         )
-        
-        if response.status_code == 200:
-            return response.json()
-        else:
-            raise Exception(f"Authorization failed: {response.status_code} - {response.text}")
-    
+        return {
+            "status": auth.status,
+            "url": auth.url,
+            "provider": provider
+        }
+
     def post_to_twitter(self, content: str, url: Optional[str] = None) -> Dict:
         """
         Post content to Twitter/X using Arcade.
-        
+
         Args:
             content: The text content to post
             url: Optional URL to include in the post
-            
+
         Returns:
             Response dictionary from Arcade API
         """
-        # Add URL to content if provided
         full_content = content
         if url:
             full_content = f"{content}\n\n{url}"
-        
-        payload = {
-            "tool_name": "X.PostTweet",
-            "input": {
-                "tweet_text": full_content
-            }
-        }
-        
-        # Add user_id if available
-        if self.user_id:
-            payload["user_id"] = self.user_id
-        
-        response = requests.post(
-            f"{self.base_url}/tools/execute",
-            headers=self.headers,
-            json=payload
-        )
-        
-        if response.status_code in [200, 201]:
+
+        try:
+            response = self.client.tools.execute(
+                tool_name="X.PostTweet",
+                input={"tweet_text": full_content},
+                user_id=self.user_id
+            )
             return {
-                "success": True,
+                "success": response.success,
                 "platform": "twitter",
-                "response": response.json(),
+                "response": response.output.value if response.output else None,
                 "content": full_content
             }
-        else:
+        except Exception as e:
             return {
                 "success": False,
                 "platform": "twitter",
-                "error": f"{response.status_code} - {response.text}",
+                "error": str(e),
                 "content": full_content
             }
-    
+
     def post_to_linkedin(self, content: str, url: Optional[str] = None, page_id: Optional[str] = None) -> Dict:
         """
         Post content to LinkedIn using Arcade.
-        
+
         Args:
             content: The text content to post
             url: Optional URL to include in the post
-            page_id: LinkedIn page ID (if posting to company page)
-            
+            page_id: LinkedIn page ID (unused, posts to authenticated user's profile)
+
         Returns:
             Response dictionary from Arcade API
         """
-        # Add URL to content if provided
         full_content = content
         if url:
             full_content = f"{content}\n\nLearn more: {url}"
-        
-        payload = {
-            "tool_name": "LinkedIn.CreatePost",
-            "input": {
-                "text": full_content
-            }
-        }
-        
-        # Add page_id if posting to company page
-        if page_id:
-            payload["input"]["page_id"] = page_id
-        
-        # Add user_id if available
-        if self.user_id:
-            payload["user_id"] = self.user_id
-        
-        response = requests.post(
-            f"{self.base_url}/tools/execute",
-            headers=self.headers,
-            json=payload
-        )
-        
-        if response.status_code in [200, 201]:
+
+        try:
+            response = self.client.tools.execute(
+                tool_name="Linkedin.CreateTextPost",
+                input={"text": full_content},
+                user_id=self.user_id
+            )
             return {
-                "success": True,
+                "success": response.success,
                 "platform": "linkedin",
-                "response": response.json(),
+                "response": response.output.value if response.output else None,
                 "content": full_content
             }
-        else:
+        except Exception as e:
             return {
                 "success": False,
                 "platform": "linkedin",
-                "error": f"{response.status_code} - {response.text}",
+                "error": str(e),
                 "content": full_content
             }
     
