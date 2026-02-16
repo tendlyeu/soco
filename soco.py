@@ -103,11 +103,13 @@ def print_command_help(name: str):
 
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] in ("help", "--help", "-h"):
+    if len(sys.argv) < 2:
+        cmd = "tui"
+    elif sys.argv[1] in ("help", "--help", "-h"):
         print_help()
         return
-
-    cmd = sys.argv[1]
+    else:
+        cmd = sys.argv[1]
 
     if cmd not in COMMANDS:
         print(f"Unknown command: {cmd}")
