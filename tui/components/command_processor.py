@@ -1,205 +1,116 @@
-"""Command processor for social media posting TUI."""
+"""Command processor for soco agent:tool CLI."""
 import re
-from typing import Optional, Dict, Any, Tuple, List
-from dataclasses import dataclass
-from enum import Enum
-
-
-class Channel(Enum):
-    """Supported social media channels."""
-    X = "x"
-    TWITTER = "twitter"
-    LINKEDIN = "li"
-    LINKEDIN_FULL = "linkedin"
-
-
-class Action(Enum):
-    """Supported actions."""
-    SUMMARISE = "summarise"
-    SUMMARIZE = "summarize"
-    POST = "post"
-    PREVIEW = "preview"
+from dataclasses import dataclass, field
+from typing import Optional
 
 
 @dataclass
-class Command:
-    """Parsed command structure."""
-    channel: Optional[Channel] = None
-    action: Optional[Action] = None
-    url: Optional[str] = None
-    content: Optional[str] = None
-    raw_input: str = ""
+class ParsedCommand:
+    """Result of parsing user input."""
+    agent: str = ""
+    tool: str = ""
+    args: dict[str, str] = field(default_factory=dict)
+    raw: str = ""
+    builtin: str = ""          # non-empty for builtins like "help", "exit"
+    builtin_arg: str = ""      # e.g. "content" in "help content"
     is_valid: bool = False
-    error_message: str = ""
+    error: str = ""
 
 
-class CommandProcessor:
-    """Processes social media posting commands."""
+# Builtins that are not agent:tool commands
+BUILTINS = {"help", "agents", "history", "context", "clear", "exit", "quit"}
 
-    def __init__(self):
-        self.history: List[str] = []
-        self.channel_map = {
-            "x": Channel.X,
-            "twitter": Channel.TWITTER,
-            "li": Channel.LINKEDIN,
-            "linkedin": Channel.LINKEDIN_FULL,
-        }
-        self.action_map = {
-            "summarise": Action.SUMMARISE,
-            "summarize": Action.SUMMARIZE,
-            "post": Action.POST,
-            "preview": Action.PREVIEW,
-        }
 
-    def parse_command(self, user_input: str) -> Command:
-        """
-        Parse user input into a command structure.
-        
-        Supported formats:
-        - channel:x action:summarise url:https://example.com
-        - channel:li action:post url:https://example.com content:"My content"
-        - channel:twitter action:preview url:https://example.com
-        """
-        cmd = Command(raw_input=user_input)
-        
-        if not user_input.strip():
-            cmd.error_message = "Empty input"
-            return cmd
+def parse_command(raw_input: str) -> ParsedCommand:
+    """
+    Parse user input into a ParsedCommand.
 
-        # Add to history
-        self.history.append(user_input)
+    Syntax:
+        agent:tool key:value key:"multi word value" ...
+        help [agent|agent:tool]
+        agents | history | context | clear | exit
+    """
+    cmd = ParsedCommand(raw=raw_input)
+    text = raw_input.strip()
+    if not text:
+        cmd.error = "Empty input"
+        return cmd
 
-        # Parse key:value pairs
-        try:
-            parts = self._parse_key_value_pairs(user_input)
-            
-            # Extract channel
-            if "channel" in parts:
-                channel_str = parts["channel"].lower()
-                if channel_str in self.channel_map:
-                    cmd.channel = self.channel_map[channel_str]
-                else:
-                    cmd.error_message = f"Unknown channel: {channel_str}. Use: x, twitter, li, linkedin"
-                    return cmd
-            
-            # Extract action
-            if "action" in parts:
-                action_str = parts["action"].lower()
-                if action_str in self.action_map:
-                    cmd.action = self.action_map[action_str]
-                else:
-                    cmd.error_message = f"Unknown action: {action_str}. Use: summarise, post, preview"
-                    return cmd
-            
-            # Extract URL
-            if "url" in parts:
-                url = parts["url"].strip()
-                if url.startswith("http://") or url.startswith("https://"):
-                    cmd.url = url
-                else:
-                    cmd.error_message = "URL must start with http:// or https://"
-                    return cmd
-            
-            # Extract content (optional)
-            if "content" in parts:
-                cmd.content = parts["content"].strip().strip('"\'')
-            
-            # Validate required fields
-            if not cmd.channel:
-                cmd.error_message = "Missing required field: channel"
+    tokens = _tokenize(text)
+    if not tokens:
+        cmd.error = "Could not parse input"
+        return cmd
+
+    first = tokens[0]
+
+    # Check if first token is a builtin
+    first_lower = first.lower()
+    if first_lower in BUILTINS:
+        cmd.builtin = first_lower
+        if first_lower == "quit":
+            cmd.builtin = "exit"
+        # Builtin argument (e.g. "help content" or "help content:copywriting")
+        if len(tokens) > 1:
+            cmd.builtin_arg = tokens[1]
+        cmd.is_valid = True
+        return cmd
+
+    # Expect agent:tool as first token
+    if ":" not in first:
+        cmd.error = f"Expected agent:tool format, got '{first}'. Type 'help' for usage."
+        return cmd
+
+    parts = first.split(":", 1)
+    cmd.agent = parts[0]
+    cmd.tool = parts[1]
+
+    if not cmd.agent or not cmd.tool:
+        cmd.error = f"Invalid command '{first}'. Use agent:tool format (e.g. content:copywriting)"
+        return cmd
+
+    # Parse remaining tokens as key:value args
+    for token in tokens[1:]:
+        if ":" in token:
+            key, _, value = token.partition(":")
+            if key:
+                cmd.args[key] = value
+            else:
+                cmd.error = f"Invalid argument: '{token}'"
                 return cmd
-            
-            if not cmd.action:
-                cmd.error_message = "Missing required field: action"
-                return cmd
-            
-            if cmd.action in [Action.SUMMARISE, Action.SUMMARIZE, Action.PREVIEW]:
-                if not cmd.url:
-                    cmd.error_message = "URL required for summarise/preview actions"
-                    return cmd
-            
-            if cmd.action == Action.POST:
-                if not cmd.url and not cmd.content:
-                    cmd.error_message = "Either URL or content required for post action"
-                    return cmd
-            
-            cmd.is_valid = True
-            return cmd
-            
-        except Exception as e:
-            cmd.error_message = f"Parse error: {str(e)}"
-            return cmd
+        else:
+            # Positional arg — treat as value for implicit 'input' key
+            if "input" not in cmd.args:
+                cmd.args["input"] = token
+            else:
+                cmd.args["input"] += " " + token
 
-    def _parse_key_value_pairs(self, user_input: str) -> Dict[str, str]:
-        """
-        Parse key:value pairs from input.
-        Handles quoted values and URLs.
-        """
-        parts = {}
-        
-        # Pattern to match key:value pairs
-        # Handles: key:value, key:"quoted value", key:https://url
-        pattern = r'(\w+):(?:"([^"]*)"|\'([^\']*)\'|(\S+))'
-        
-        matches = re.finditer(pattern, user_input)
-        for match in matches:
-            key = match.group(1).lower()
-            # Get the value from whichever group matched (quoted or unquoted)
-            value = match.group(2) or match.group(3) or match.group(4)
-            parts[key] = value
-        
-        return parts
+    cmd.is_valid = True
+    return cmd
 
-    def normalize_channel(self, channel: Channel) -> str:
-        """Normalize channel to standard name."""
-        if channel in [Channel.X, Channel.TWITTER]:
-            return "x"
-        elif channel in [Channel.LINKEDIN, Channel.LINKEDIN_FULL]:
-            return "linkedin"
-        return channel.value
 
-    def get_help(self) -> str:
-        """Return help text for command syntax."""
-        return """
-╔════════════════════════════════════════════════════════════════╗
-║           Social Media Posting TUI - Command Help             ║
-╚════════════════════════════════════════════════════════════════╝
+def _tokenize(text: str) -> list[str]:
+    """
+    Tokenize input respecting quoted strings.
 
-SYNTAX:
-  channel:<channel> action:<action> url:<url> [content:"text"]
-
-CHANNELS:
-  • x, twitter        Post to X (Twitter)
-  • li, linkedin      Post to LinkedIn
-
-ACTIONS:
-  • summarise         Generate AI summary from URL and post
-  • post              Post content directly
-  • preview           Preview content before posting
-
-EXAMPLES:
-
-1. Summarise and post to X:
-   channel:x action:summarise url:https://example.com/article
-
-2. Post to LinkedIn with custom content:
-   channel:li action:post url:https://example.com content:"Check this out!"
-
-3. Preview before posting to Twitter:
-   channel:twitter action:preview url:https://example.com
-
-COMMANDS:
-  • help              Show this help message
-  • history           Show command history
-  • clear             Clear screen
-  • exit, quit        Exit the application
-
-NOTES:
-  • URLs must start with http:// or https://
-  • Use quotes for content with spaces: content:"My content here"
-  • Channel aliases: x=twitter, li=linkedin
-"""
-
-    def get_history(self) -> List[str]:
-        """Return command history."""
-        return self.history.copy()
+    Handles:
+        key:"multi word value"
+        key:'multi word value'
+        key:value
+        bare_word
+    """
+    tokens = []
+    # Match key:"quoted value", key:'quoted value', or non-space sequences
+    pattern = r'''(\S+?:"[^"]*"|\S+?:'[^']*'|\S+)'''
+    for match in re.finditer(pattern, text):
+        token = match.group(1)
+        # Strip quotes from values
+        if ':"' in token:
+            key, _, val = token.partition(':"')
+            val = val.rstrip('"')
+            token = f"{key}:{val}"
+        elif ":'" in token:
+            key, _, val = token.partition(":'")
+            val = val.rstrip("'")
+            token = f"{key}:{val}"
+        tokens.append(token)
+    return tokens

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-soco - Tendly Social Code CLI
+soco — Marketing CLI
 
 Central entry point for all soco commands. Run `python soco.py help` to see
 available commands, or `python soco.py <command> --help` for command-specific options.
+
+Default (no args): launches the marketing CLI REPL.
 """
 import subprocess
 import sys
@@ -13,6 +15,12 @@ ROOT = Path(__file__).parent
 AGENTS = ROOT / "agents"
 
 COMMANDS = {
+    "cli": {
+        "script": ROOT / "tui_main.py",
+        "summary": "Launch the marketing CLI (interactive REPL with agent:tool interface)",
+        "usage": "python soco.py [cli]",
+        "options": [],
+    },
     "generate": {
         "script": AGENTS / "generate_content.py",
         "summary": "Generate social media content (Twitter + LinkedIn) from recent tenders",
@@ -74,7 +82,7 @@ COMMANDS = {
     },
     "tui": {
         "script": ROOT / "tui_main.py",
-        "summary": "Launch the interactive TUI for social media posting",
+        "summary": "Alias for 'cli' (launch the marketing CLI)",
         "usage": "python soco.py tui",
         "options": [],
     },
@@ -89,14 +97,15 @@ COMMANDS = {
 
 
 def print_help():
-    print("soco - Tendly Social Code CLI\n")
-    print("Usage: python soco.py <command> [options]\n")
+    print("soco — Marketing CLI\n")
+    print("Usage: python soco.py [command] [options]\n")
     print("Commands:")
     max_name = max(len(name) for name in COMMANDS)
     for name, info in COMMANDS.items():
         print(f"  {name:<{max_name + 2}} {info['summary']}")
     print(f"\n  {'help':<{max_name + 2}} Show this help message")
-    print(f"\nRun 'python soco.py <command> --help' for command-specific options.")
+    print(f"\nDefault (no args): launches the marketing CLI REPL.")
+    print(f"Run 'python soco.py <command> --help' for command-specific options.")
 
 
 def print_command_help(name: str):
@@ -113,7 +122,7 @@ def print_command_help(name: str):
 
 def main():
     if len(sys.argv) < 2:
-        cmd = "run"
+        cmd = "cli"
     elif sys.argv[1] in ("help", "--help", "-h"):
         print_help()
         return
