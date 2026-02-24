@@ -1,376 +1,244 @@
-# Tendly Social - Automated Social Media Posting Agent
+# soco — Marketing CLI
 
-An intelligent social media automation tool that generates and posts tender summaries from Tendly.eu to Twitter/X and LinkedIn using AI-powered content generation and Arcade AI for posting.
+A unified marketing command-line tool that consolidates 32 marketing skills across 6 agent groups into a single `agent:tool` interface. Built for SaaS teams that want AI-powered marketing without leaving the terminal.
 
-## Overview
+```
+soco> content:copywriting topic:"SaaS landing page" tone:professional
+soco> seo:audit url:https://tendly.eu
+soco> social:post channel:x content:"New feature!"
+```
 
-Tendly Social streamlines the process of sharing public procurement opportunities on social media by automatically generating engaging, platform-optimized content using XAI's Grok-3 model and posting it through Arcade AI's social media integration.
+## Architecture
 
-## Features
+```mermaid
+graph TB
+    subgraph CLI["soco CLI (REPL)"]
+        PARSER["Command Parser<br/>agent:tool key:value"]
+        COMPLETER["AgentCompleter<br/>3-level tab completion"]
+        HELP["Help Renderer<br/>overview → agent → tool"]
+    end
 
-### Core Functionality
+    subgraph AGENTS["6 Agent Groups (32 tools)"]
+        CONTENT["content<br/>7 tools"]
+        STRATEGY["strategy<br/>6 tools"]
+        SOCIAL["social<br/>3 tools"]
+        CRO["cro<br/>8 tools"]
+        SEO["seo<br/>5 tools"]
+        ADS["ads<br/>3 tools"]
+    end
 
-- **AI-Powered Content Generation**: Leverages XAI Grok-3 to create engaging, professional summaries optimized for each platform
-- **Multi-Platform Posting**: Automated posting to Twitter/X and LinkedIn with platform-specific formatting
-- **Interactive Web Interface**: User-friendly Streamlit application for tender selection and content management
-- **Content Customization**: Edit AI-generated content before posting
-- **Hashtag Generation**: Automatic category-specific hashtag suggestions
-- **Posting History**: Track all published posts with timestamps and platform details
+    subgraph CTX["Shared State"]
+        REGISTRY["AgentRegistry"]
+        SESSION["SessionContext"]
+        PRODUCT["ProductContext"]
+    end
 
-### Technical Capabilities
+    subgraph BACKENDS["Integration Backends"]
+        XAI["XAI / Grok<br/>Content generation"]
+        ARCADE["Arcade.dev<br/>Social posting"]
+        PW["Playwright<br/>Page analysis"]
+        COMPOSIO["Composio<br/>Third-party APIs"]
+    end
 
-- **Modular Architecture**: Separate utilities for summarization and social media posting
-- **Comprehensive Testing**: Full test suite with pytest and HTML reporting
-- **Environment Configuration**: Secure API key management through environment variables
-- **Error Handling**: Robust error handling for API failures and rate limiting
-- **Extensible Design**: Easy to add new platforms or content sources
+    PARSER --> REGISTRY --> AGENTS
+    AGENTS --> SESSION --> BACKENDS
+    PRODUCT --> AGENTS
+    CONTENT & STRATEGY --> XAI
+    SOCIAL --> ARCADE
+    CRO & SEO --> PW
+    CRO & SEO & ADS --> XAI
+```
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.12+
+- API keys (see [Configuration](#configuration))
+
+### Install
+
+```bash
+git clone https://github.com/tendlyeu/soco.git
+cd soco
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Configure
+
+```bash
+cp .env.sample .env
+# Edit .env with your API keys
+```
+
+### Launch
+
+```bash
+python soco.py          # starts the marketing CLI (default)
+```
+
+## Command Syntax
+
+```
+agent:tool key:value key:"multi word value"
+```
+
+First token is `agent:tool`, remaining tokens are `key:value` arguments. Quoted values support spaces.
+
+### Builtins
+
+| Command | Description |
+|---------|-------------|
+| `help` | Show all agents |
+| `help <agent>` | Show agent's tools |
+| `help <agent:tool>` | Show tool details and parameters |
+| `agents` | List all agents with tool counts |
+| `context` | Show current product context |
+| `history` | Show command history |
+| `clear` | Clear screen |
+| `exit` | Exit soco |
+
+## Agent Groups
+
+| Agent | Tools | Integration | Description |
+|-------|------:|-------------|-------------|
+| **content** | 7 | XAI/Grok | Copywriting, email sequences, ad creative, content strategy |
+| **strategy** | 6 | XAI/Grok | Launch planning, pricing, referral programs, marketing psychology |
+| **social** | 3 | Arcade.dev | Post to X/LinkedIn, scheduling, analytics |
+| **cro** | 8 | Playwright + XAI | Page analysis, signup flows, form CRO, churn prevention |
+| **seo** | 5 | Playwright + XAI | Technical audits, schema markup, AI SEO, competitor analysis |
+| **ads** | 3 | XAI + Composio | Campaign strategy, A/B testing, analytics tracking |
+
+See [docs/skills_readme.md](docs/skills_readme.md) for the full skills reference and [docs/tools_readme.md](docs/tools_readme.md) for detailed tool documentation.
+
+## Examples
+
+```bash
+# Generate marketing copy
+soco> content:copywriting topic:"SaaS landing page hero" format:headline
+
+# Set product context (shared across all agents)
+soco> strategy:product-context set company:Tendly product:"Tender platform" audience:"procurement teams"
+
+# SEO audit a page
+soco> seo:audit url:https://tendly.eu
+
+# Post to social media (with dry run)
+soco> social:post channel:x content:"Exciting launch!" dry-run:true
+
+# Analyze a page for conversions
+soco> cro:page-cro url:https://example.com/pricing
+
+# Design an A/B test
+soco> ads:ab-test page:"pricing page" hypothesis:"Annual toggle increases conversions"
+
+# Get marketing ideas
+soco> strategy:ideas topic:"user acquisition" count:10
+```
 
 ## Project Structure
 
 ```
-tendly-social/
-├── app.py                          # Main Streamlit application
-├── sample_tenders.json             # Sample tender data for testing
-├── .env                            # Environment variables (API keys)
-├── requirements.txt                # Python dependencies
-├── pytest.ini                      # Pytest configuration
-│
-├── utils/                          # Utility modules
-│   ├── __init__.py
-│   ├── summarizer.py              # XAI-powered content generation
-│   └── social_poster.py           # Arcade AI social media posting
-│
-├── tests/                          # Test suite
-│   ├── __init__.py
-│   ├── test_summarizer.py         # Summarizer unit tests
-│   └── test_social_poster.py      # Social poster unit tests
-│
-├── test-results/                   # Test outputs and reports
-│   ├── report.html                # Pytest HTML report
-│   ├── summarizer_test_results.json  # AI-generated summaries
-│   ├── testing-commentary.md      # Detailed testing notes
-│   └── streamlit-app-main.webp    # Application screenshot
-│
-└── docs/                           # Documentation
-    ├── tendly-website-notes.md    # Website exploration notes
-    ├── api-integration.md         # API integration guide
-    ├── deployment.md              # Deployment instructions
-    └── troubleshooting.md         # Common issues and solutions
+soco/
+├── soco.py                          # CLI entry point (default: marketing REPL)
+├── tui_main.py                      # REPL launcher
+├── tui/
+│   ├── app.py                       # SocoApp — REPL, completer, routing
+│   └── components/
+│       ├── command_processor.py      # agent:tool parser
+│       └── social_handler.py        # Legacy TUI handler
+├── agents/
+│   ├── base.py                      # BaseAgent ABC, ToolResult, ToolDefinition
+│   ├── registry.py                  # AgentRegistry singleton
+│   ├── content/__init__.py          # ContentAgent (7 tools)
+│   ├── strategy/__init__.py         # StrategyAgent (6 tools)
+│   ├── social/__init__.py           # SocialAgent (3 tools)
+│   ├── cro/__init__.py              # CroAgent (8 tools)
+│   ├── seo/__init__.py              # SeoAgent (5 tools)
+│   ├── ads/__init__.py              # AdsAgent (3 tools)
+│   ├── generate_content.py          # Legacy: batch content generation
+│   ├── review_content.py            # Legacy: interactive review
+│   ├── post_content.py              # Legacy: DB-backed posting
+│   ├── run_pipeline.py              # Legacy: generate→review→post
+│   └── interactive_pipeline.py      # Legacy: step-by-step pipeline
+├── integrations/
+│   ├── base.py                      # IntegrationBackend ABC
+│   ├── xai_int.py                   # XAI/Grok (OpenAI client → x.ai)
+│   ├── arcade_int.py                # Arcade.dev (arcadepy SDK)
+│   ├── playwright_int.py            # Playwright (async browser)
+│   └── composio_int.py              # Composio (stub)
+├── context/
+│   └── session.py                   # SessionContext + ProductContext
+├── help/
+│   └── renderer.py                  # 3-level Rich help renderer
+├── utils/
+│   ├── social_poster.py             # ArcadeSocialPoster
+│   ├── summarizer.py                # TenderSummarizer (XAI)
+│   ├── tendly_scraper.py            # Playwright scraper
+│   └── langchain_sql.py             # Database utilities
+└── docs/
+    ├── skills_readme.md             # Full skills reference
+    └── tools_readme.md              # Detailed tool documentation
 ```
-
-## Installation
-
-### Prerequisites
-
-- Python 3.11 or higher
-- pip package manager
-- Virtual environment (recommended)
-
-### Setup Steps
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/tendlyeu/tendly-social.git
-cd tendly-social
-```
-
-2. **Create and activate virtual environment**
-
-```bash
-python3.11 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**
-
-```bash
-pip install -r requirements.txt
-```
-
-4. **Configure environment variables**
-
-Create a `.env` file in the project root with the following variables:
-
-```env
-# API Keys
-ARCADE_API_KEY=your_arcade_api_key_here
-XAI_API_KEY=your_xai_api_key_here
-
-# Arcade User Credentials
-ARCADE_USER_EMAIL=your_email@example.com
-ARCADE_USER_PASSWORD=your_password
-
-# Social Media Credentials
-TWITTER_EMAIL=your_twitter_email@example.com
-TWITTER_PASSWORD=your_twitter_password
-LINKEDIN_PAGE=https://www.linkedin.com/company/your-company/
-```
-
-## Usage
-
-### Running the Streamlit Application
-
-```bash
-streamlit run app.py
-```
-
-The application will be available at `http://localhost:8501`
-
-### Application Workflow
-
-1. **Select a Tender**
-   - Browse available tenders in the "Select Tender" tab
-   - Click "Select This Tender" to choose one for posting
-
-2. **Generate Content**
-   - Navigate to the "Generate Content" tab
-   - Click "Generate Twitter Summary" for a 280-character post
-   - Click "Generate LinkedIn Summary" for a detailed professional post
-   - Edit the generated content if needed
-
-3. **Post to Social Media**
-   - Review the content preview in the "Post to Social Media" tab
-   - Select target platforms (Twitter/X and/or LinkedIn)
-   - Click "Post to Selected Platforms" to publish
-
-### Running Tests
-
-Execute the full test suite:
-
-```bash
-pytest tests/ -v --html=test-results/report.html --self-contained-html
-```
-
-Run specific test modules:
-
-```bash
-# Test summarizer only
-pytest tests/test_summarizer.py -v
-
-# Test social poster only
-pytest tests/test_social_poster.py -v
-
-# Run comprehensive summarizer test with all sample tenders
-export $(cat .env | xargs)
-pytest tests/test_summarizer.py::test_all_sample_tenders -v -s
-```
-
-## API Integration
-
-### XAI (Grok) Integration
-
-The application uses XAI's Grok-3 model for content generation:
-
-- **Endpoint**: `https://api.x.ai/v1`
-- **Model**: `grok-3`
-- **Temperature**: 0.7 (balanced creativity and consistency)
-- **Max Tokens**: 150 (Twitter), 500 (LinkedIn)
-
-### Arcade AI Integration
-
-Arcade AI handles social media posting through their unified API:
-
-- **Endpoint**: `https://api.arcade-ai.com/v1`
-- **Tools Used**:
-  - `X.PostTweet` for Twitter/X posting
-  - `LinkedIn.CreatePost` for LinkedIn posting
 
 ## Configuration
 
-### Platform Settings
+Copy `.env.sample` to `.env` and set:
 
-Configure posting behavior in the Streamlit sidebar:
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `XAI_API_KEY` | Yes | XAI/Grok API key ([console.x.ai](https://console.x.ai)) |
+| `ARCADE_API_KEY` | For social | Arcade.dev API key ([arcade.dev](https://arcade.dev)) |
+| `ARCADE_USER_ID` | For social | Arcade user ID (typically your email) |
+| `XAI_MODEL` | No | Model name (default: `grok-3`) |
+| `COMPOSIO_API_KEY` | No | Composio API key for GA4, Mailchimp, etc. |
+| `DB_URL` | For legacy | PostgreSQL connection string |
 
-- **Post to Twitter/X**: Enable/disable Twitter posting
-- **Post to LinkedIn**: Enable/disable LinkedIn posting
-- **LinkedIn Page URL**: Specify company page for posting
+### Integration Status
 
-### Content Generation Settings
+On startup, soco shows which integrations are ready:
 
-Modify content generation parameters in `utils/summarizer.py`:
-
-```python
-# Twitter summary parameters
-temperature=0.7
-max_tokens=150
-
-# LinkedIn summary parameters
-temperature=0.7
-max_tokens=500
+```
+  6 agents, 32 tools loaded
+  Integrations: xai: ready | arcade: ready | playwright: ready | composio: not configured
 ```
 
-## Sample Tenders
+## Legacy Commands
 
-The application includes 5 sample tenders covering various categories:
+The original tender pipeline commands still work:
 
-1. **AI-Powered Public Procurement Platform** (€450,000)
-2. **Green Energy Infrastructure** (€2,500,000)
-3. **Digital Health Records Integration** (€850,000)
-4. **Smart City Transportation Platform** (€680,000)
-5. **Cybersecurity Assessment Services** (€320,000)
-
-## Testing
-
-### Test Coverage
-
-- **Unit Tests**: Individual component testing for summarizer and social poster
-- **Integration Tests**: End-to-end workflow validation
-- **Dry Run Tests**: API structure validation without actual posting
-
-### Test Results
-
-All test results are saved to the `test-results/` directory:
-
-- **HTML Report**: Interactive test execution report
-- **JSON Results**: AI-generated summaries for all sample tenders
-- **Screenshots**: Application interface captures
-- **Commentary**: Detailed testing notes and observations
-
-## Known Issues
-
-### Issue 1: Arcade AI Live Posting
-
-**Status**: Pending Validation
-
-**Description**: The Arcade AI posting functionality is implemented but requires live testing with actual API calls.
-
-**Workaround**: Use dry-run mode for testing content generation without posting.
-
-**Next Steps**: Execute test posts to validate API integration and error handling.
-
-### Issue 2: Tendly.eu Authentication
-
-**Status**: Not Implemented
-
-**Description**: The Tendly.eu website requires authentication to access full tender details.
-
-**Workaround**: Using sample tender data for testing and development.
-
-**Next Steps**: Implement authentication flow to access live tender data from Tendly.eu API.
-
-### Issue 3: Rate Limiting
-
-**Status**: Not Implemented
-
-**Description**: No rate limiting implemented for API calls.
-
-**Recommendation**: Add rate limiting to prevent API quota exhaustion, especially for batch operations.
-
-**Next Steps**: Implement exponential backoff and request throttling.
-
-## Next Steps
-
-### Immediate Priorities
-
-1. **Live Posting Validation**
-   - Test actual posting to Twitter/X with Arcade AI
-   - Validate LinkedIn company page posting
-   - Verify error handling for API failures
-
-2. **Tendly.eu Integration**
-   - Implement authentication for Tendly.eu
-   - Create API client for fetching live tender data
-   - Add automatic tender discovery and filtering
-
-3. **Error Handling Enhancement**
-   - Add comprehensive try-catch blocks
-   - Implement retry logic with exponential backoff
-   - Create detailed error logging
-
-### Future Enhancements
-
-1. **Automation Features**
-   - Scheduled posting with cron jobs
-   - Batch processing for multiple tenders
-   - Automatic tender monitoring and posting
-
-2. **Content Optimization**
-   - A/B testing for different content variations
-   - Engagement analytics tracking
-   - Image generation for social media posts
-
-3. **Multi-language Support**
-   - Estonian language content generation
-   - Automatic language detection and translation
-   - Localized hashtag suggestions
-
-4. **Advanced Features**
-   - Custom content templates
-   - User role management
-   - Analytics dashboard
-   - Email notifications for posting status
-
-## Deployment
-
-### Local Deployment
-
-The application is ready for local deployment. Simply follow the installation steps and run the Streamlit app.
-
-### Production Deployment
-
-For production deployment, consider:
-
-1. **Hosting**: Deploy on Streamlit Cloud, Heroku, or AWS
-2. **Security**: Implement user authentication and API key encryption
-3. **Monitoring**: Add logging and error tracking (e.g., Sentry)
-4. **Scaling**: Implement caching and database for tender storage
-5. **Backup**: Regular backups of posting history and configuration
-
-See `docs/deployment.md` for detailed deployment instructions.
-
-## Troubleshooting
-
-### Common Issues
-
-**Problem**: "XAI_API_KEY must be provided or set in environment"
-
-**Solution**: Ensure the `.env` file exists and contains the XAI_API_KEY variable. Load environment variables before running the app.
-
-**Problem**: "Port 8501 is already in use"
-
-**Solution**: Kill the existing Streamlit process or use a different port:
 ```bash
-streamlit run app.py --server.port 8502
+python soco.py generate    # Generate social content from tenders
+python soco.py review      # Review and approve draft posts
+python soco.py post        # Post approved content
+python soco.py pipeline    # Full generate→review→post pipeline
+python soco.py run         # Interactive step-by-step pipeline
+python soco.py web         # Streamlit dashboard
 ```
 
-**Problem**: "Model grok-beta was deprecated"
+## Tech Stack
 
-**Solution**: The code has been updated to use `grok-3`. Ensure you're using the latest version of the code.
-
-See `docs/troubleshooting.md` for more detailed troubleshooting guidance.
-
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is proprietary software owned by Tendly. All rights reserved.
+- **Python 3.12** with asyncio
+- **prompt_toolkit** — REPL with history, completion, key bindings
+- **Rich** — terminal formatting and help rendering
+- **XAI/Grok** — content generation via OpenAI-compatible API
+- **Arcade.dev** — social media posting (X, LinkedIn)
+- **Playwright** — headless browser for page analysis
+- **Composio** — third-party API integrations (GA4, Mailchimp, Semrush)
+- **PostgreSQL** — post storage (legacy pipeline)
 
 ## Support
 
-For questions, issues, or feature requests:
-
 - **Email**: info@tendly.eu
-- **Phone**: +372 509 2839
-- **Website**: https://www.tendly.eu
+- **Website**: [tendly.eu](https://www.tendly.eu)
 
-## Acknowledgments
+## License
 
-- **XAI (Grok)**: AI-powered content generation
-- **Arcade AI**: Social media posting automation
-- **Streamlit**: Interactive web application framework
-- **Tendly Team**: Product vision and requirements
+Proprietary software owned by Tendly. All rights reserved.
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: November 16, 2025  
+**Version**: 2.0.0
 **Maintainer**: Tendly Development Team
