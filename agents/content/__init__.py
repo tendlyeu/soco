@@ -35,6 +35,7 @@ class ContentAgent(BaseAgent):
                     "tone": {"description": "Writing tone", "required": False, "default": "professional", "options": ["professional", "casual", "urgent", "friendly"]},
                     "platform": {"description": "Target platform", "required": False, "default": "web", "options": ["web", "email", "social"]},
                 },
+                estimated_seconds=8,
             ),
             ToolDefinition(
                 name="copy-editing",
@@ -50,6 +51,7 @@ class ContentAgent(BaseAgent):
                     "input": {"description": "The copy to review and improve", "required": True},
                     "goal": {"description": "Editing focus", "required": False, "default": "all", "options": ["clarity", "persuasion", "conciseness", "all"]},
                 },
+                estimated_seconds=8,
             ),
             ToolDefinition(
                 name="social-content",
@@ -67,6 +69,7 @@ class ContentAgent(BaseAgent):
                     "platform": {"description": "Target social platform", "required": False, "default": "x", "options": ["x", "linkedin", "both"]},
                     "tone": {"description": "Writing tone", "required": False, "default": "professional"},
                 },
+                estimated_seconds=10,
             ),
             ToolDefinition(
                 name="email-sequence",
@@ -83,6 +86,7 @@ class ContentAgent(BaseAgent):
                     "topic": {"description": "Email sequence topic/trigger", "required": False},
                     "steps": {"description": "Number of emails in sequence", "required": False, "default": "5"},
                 },
+                estimated_seconds=15,
             ),
             ToolDefinition(
                 name="cold-email",
@@ -99,6 +103,7 @@ class ContentAgent(BaseAgent):
                     "steps": {"description": "Number of emails in sequence", "required": False, "default": "3"},
                     "tone": {"description": "Writing tone", "required": False, "default": "professional"},
                 },
+                estimated_seconds=15,
             ),
             ToolDefinition(
                 name="ad-creative",
@@ -116,6 +121,7 @@ class ContentAgent(BaseAgent):
                     "format": {"description": "Ad format", "required": False, "default": "standard", "options": ["standard", "responsive", "carousel"]},
                     "audience": {"description": "Target audience description", "required": False},
                 },
+                estimated_seconds=8,
             ),
             ToolDefinition(
                 name="content-strategy",
@@ -132,6 +138,7 @@ class ContentAgent(BaseAgent):
                     "months": {"description": "Planning horizon in months", "required": False, "default": "3"},
                     "format": {"description": "Output format", "required": False, "default": "strategy", "options": ["strategy", "calendar", "clusters"]},
                 },
+                estimated_seconds=15,
             ),
         ]
 

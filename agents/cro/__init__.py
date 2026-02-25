@@ -34,6 +34,7 @@ class CroAgent(BaseAgent):
                     "url": {"description": "Page URL to analyze", "required": True},
                     "focus": {"description": "Specific area to focus on", "required": False},
                 },
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="signup-flow",
@@ -42,6 +43,7 @@ class CroAgent(BaseAgent):
                 examples=["cro:signup-flow url:https://example.com/signup"],
                 required_integrations=["playwright", "xai"],
                 parameters={"url": {"description": "Signup page URL", "required": True}},
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="onboarding",
@@ -50,6 +52,7 @@ class CroAgent(BaseAgent):
                 examples=["cro:onboarding url:https://app.example.com/welcome"],
                 required_integrations=["playwright", "xai"],
                 parameters={"url": {"description": "Onboarding page URL", "required": True}},
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="form-cro",
@@ -58,6 +61,7 @@ class CroAgent(BaseAgent):
                 examples=["cro:form-cro url:https://example.com/contact"],
                 required_integrations=["playwright", "xai"],
                 parameters={"url": {"description": "Page URL containing the form", "required": True}},
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="popup-cro",
@@ -66,6 +70,7 @@ class CroAgent(BaseAgent):
                 examples=["cro:popup-cro url:https://example.com"],
                 required_integrations=["playwright", "xai"],
                 parameters={"url": {"description": "Page URL to analyze for popups", "required": True}},
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="paywall-upgrade",
@@ -74,6 +79,7 @@ class CroAgent(BaseAgent):
                 examples=["cro:paywall-upgrade url:https://app.example.com/upgrade"],
                 required_integrations=["playwright", "xai"],
                 parameters={"url": {"description": "Upgrade/paywall page URL", "required": True}},
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="churn-prevention",
@@ -82,6 +88,7 @@ class CroAgent(BaseAgent):
                 examples=["cro:churn-prevention url:https://app.example.com/cancel"],
                 required_integrations=["playwright", "xai"],
                 parameters={"url": {"description": "Cancel/churn page URL", "required": True}},
+                estimated_seconds=30,
             ),
             ToolDefinition(
                 name="free-tool-strategy",
@@ -97,6 +104,7 @@ class CroAgent(BaseAgent):
                     "industry": {"description": "Your industry/niche", "required": True},
                     "goal": {"description": "Lead gen goal", "required": False, "default": "email signups"},
                 },
+                estimated_seconds=15,
             ),
         ]
 

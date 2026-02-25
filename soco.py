@@ -21,6 +21,15 @@ COMMANDS = {
         "usage": "python soco.py [cli]",
         "options": [],
     },
+    "test": {
+        "summary": "Run a single agent:tool command and print the result",
+        "usage": 'python soco.py test <agent:tool> [key:value ...]',
+        "options": [
+            ("agent:tool", "Tool to run, e.g. strategy:launch"),
+            ("key:value", "Parameters, e.g. product:\"AI tool\" stage:pre-launch"),
+        ],
+        "builtin": "test",
+    },
     "generate": {
         "script": AGENTS / "generate_content.py",
         "summary": "Generate social media content (Twitter + LinkedIn) from recent tenders",
@@ -128,6 +137,107 @@ def print_command_help(name: str):
     print()
 
 
+def run_test(argv: list[str]):
+    """Run a single agent:tool command directly — no REPL, no web."""
+    import asyncio
+    import time
+
+    sys.path.insert(0, str(ROOT))
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env")
+
+    from agents.base import ToolStatus
+    from agents.registry import AgentRegistry
+    from context.session import SessionContext
+
+    if not argv or ":" not in argv[0]:
+        print("Usage: python soco.py test <agent:tool> [key:value ...]")
+        print('Example: python soco.py test strategy:launch product:"AI analytics tool"')
+        sys.exit(1)
+
+    # Parse agent:tool and key:value args
+    cmd = argv[0]
+    agent_name, tool_name = cmd.split(":", 1)
+
+    args = {}
+    # Join remaining args and parse key:value pairs (supports quoted values)
+    raw = " ".join(argv[1:])
+    import shlex
+    try:
+        tokens = shlex.split(raw)
+    except ValueError:
+        tokens = raw.split()
+
+    for token in tokens:
+        if ":" in token:
+            k, v = token.split(":", 1)
+            args[k] = v
+
+    # Boot
+    AgentRegistry.reset()
+    reg = AgentRegistry.get()
+    ctx = SessionContext()
+
+    from integrations.xai_int import XaiIntegration
+    from integrations.arcade_int import ArcadeIntegration
+    from integrations.playwright_int import PlaywrightIntegration
+    from integrations.composio_int import ComposioIntegration
+    from agents.content import ContentAgent
+    from agents.strategy import StrategyAgent
+    from agents.social import SocialAgent
+    from agents.cro import CroAgent
+    from agents.seo import SeoAgent
+    from agents.ads import AdsAgent
+
+    for Int in [XaiIntegration, ArcadeIntegration, PlaywrightIntegration, ComposioIntegration]:
+        inst = Int()
+        if inst.is_configured():
+            ctx.set_integration(inst.name, inst)
+
+    for Cls in [ContentAgent, StrategyAgent, SocialAgent, CroAgent, SeoAgent, AdsAgent]:
+        reg.register(Cls())
+
+    # Resolve
+    agent = reg.get_agent(agent_name)
+    if not agent:
+        print(f"Unknown agent: {agent_name}")
+        print(f"Available: {', '.join(a.name for a in reg.all_agents())}")
+        sys.exit(1)
+
+    tool_def = agent.resolve_tool(tool_name)
+    if not tool_def:
+        print(f"Unknown tool: {agent_name}:{tool_name}")
+        tools = agent.get_tools()
+        print(f"Available: {', '.join(t.name for t in tools)}")
+        sys.exit(1)
+
+    resolved = tool_def.name
+    eta = tool_def.estimated_seconds
+    print(f"Running {agent_name}:{resolved}... (~{eta}s)")
+    if args:
+        print(f"  args: {args}")
+
+    # Execute
+    t0 = time.monotonic()
+
+    async def _run():
+        return await agent.execute(resolved, args, ctx)
+
+    result = asyncio.run(_run())
+    elapsed = time.monotonic() - t0
+
+    if result.status == ToolStatus.SUCCESS:
+        print(f"\n--- SUCCESS ({elapsed:.1f}s) ---\n")
+        print(result.output)
+    elif result.status == ToolStatus.NEEDS_INPUT:
+        print(f"\n--- NEEDS INPUT ({elapsed:.1f}s) ---")
+        print(result.follow_up_prompt or result.output)
+    else:
+        print(f"\n--- ERROR ({elapsed:.1f}s) ---")
+        print(result.error or result.output)
+        sys.exit(1)
+
+
 def main():
     if len(sys.argv) < 2:
         cmd = "cli"
@@ -147,6 +257,11 @@ def main():
 
     if "--help" in extra_args or "-h" in extra_args:
         print_command_help(cmd)
+        return
+
+    # Built-in commands (no subprocess)
+    if info.get("builtin") == "test":
+        run_test(extra_args)
         return
 
     runner = info.get("runner")

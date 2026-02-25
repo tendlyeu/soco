@@ -35,6 +35,7 @@ class AdsAgent(BaseAgent):
                     "goal": {"description": "Campaign goal", "required": False, "default": "conversions", "options": ["awareness", "traffic", "signups", "conversions", "revenue"]},
                     "audience": {"description": "Target audience description", "required": False},
                 },
+                estimated_seconds=20,
             ),
             ToolDefinition(
                 name="ab-test",
@@ -54,6 +55,7 @@ class AdsAgent(BaseAgent):
                     "variants": {"description": "Number of variants", "required": False, "default": "2"},
                     "metric": {"description": "Primary success metric", "required": False, "default": "conversion-rate"},
                 },
+                estimated_seconds=15,
             ),
             ToolDefinition(
                 name="analytics-tracking",
@@ -71,6 +73,7 @@ class AdsAgent(BaseAgent):
                     "platform": {"description": "Analytics platform", "required": False, "default": "ga4", "options": ["ga4", "mixpanel", "amplitude", "posthog"]},
                     "events": {"description": "Event type focus", "required": False, "default": "recommended", "options": ["recommended", "custom", "ecommerce", "all"]},
                 },
+                estimated_seconds=20,
             ),
         ]
 

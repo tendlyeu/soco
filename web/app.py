@@ -172,7 +172,9 @@ async def agent_chat_stream(user_msg: str, history: list, session_list: list):
                 name = event.get("name", "unknown")
                 cmd = name.replace("__", ":", 1)
                 args = event["data"].get("input", {})
-                yield f"event: tool_start\ndata: {json.dumps({'command': cmd, 'args': args})}\n\n"
+                # Look up estimated time from registry
+                eta = _get_tool_eta(cmd)
+                yield f"event: tool_start\ndata: {json.dumps({'command': cmd, 'args': args, 'eta': eta})}\n\n"
                 accumulated_text.clear()
 
             elif kind == "on_tool_end":
@@ -645,6 +647,18 @@ app, rt = fast_app(
 
 # ── Helpers ───────────────────────────────────────────────────────────────
 
+def _get_tool_eta(cmd: str) -> int:
+    """Look up estimated_seconds for an agent:tool command string."""
+    parts = cmd.split(":", 1)
+    if len(parts) == 2:
+        agent = registry.get_agent(parts[0])
+        if agent:
+            tool_def = agent.resolve_tool(parts[1])
+            if tool_def:
+                return tool_def.estimated_seconds
+    return 10
+
+
 def _get_chat_title(sid: str) -> str:
     """First user message truncated to ~35 chars, or fallback."""
     msgs = chat_sessions.get(sid, [])
@@ -1043,17 +1057,25 @@ def index(sess, chat: str = ""):
                         const data = JSON.parse(evtData);
 
                         if (evtType === 'token') {
+                            // Clear ETA placeholder on first real token
+                            if (bubble.dataset.eta) { bubble.textContent = ''; delete bubble.dataset.eta; }
                             bubble.textContent += data.text;
                             scrollChat();
                         } else if (evtType === 'tool_start') {
                             badgeN++;
+                            const eta = data.eta || 10;
                             const badge = document.createElement('div');
                             badge.className = 'tool-badge';
                             badge.id = 'badge-' + badgeN;
-                            badge.innerHTML = '<span class="dot" style="background:var(--yellow)"></span>' + escapeHtml(data.command);
+                            badge.innerHTML = '<span class="dot" style="background:var(--yellow)"></span>'
+                                + escapeHtml(data.command)
+                                + ' <span style="color:var(--muted);font-size:.65rem;margin-left:.3rem">~' + eta + 's</span>';
                             badge.onclick = toggleThinking;
                             asstDiv.insertBefore(badge, bubble);
-                            addThinkStep('tool-call', 'tool_call: ' + data.command, 'Args: ' + JSON.stringify(data.args, null, 2));
+                            // Show ETA message in streaming bubble
+                            bubble.textContent = 'Working on ' + data.command + '... (~' + eta + 's)';
+                            bubble.dataset.eta = '1';
+                            addThinkStep('tool-call', 'tool_call: ' + data.command + ' (~' + eta + 's)', 'Args: ' + JSON.stringify(data.args, null, 2));
                             scrollChat();
                         } else if (evtType === 'tool_end') {
                             const badge = document.getElementById('badge-' + badgeN);

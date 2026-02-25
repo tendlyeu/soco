@@ -26,6 +26,7 @@ class SocialAgent(BaseAgent):
                     "url": {"description": "URL to include in the post", "required": False},
                     "dry-run": {"description": "Preview without posting", "required": False, "options": ["true", "false"]},
                 },
+                estimated_seconds=5,
             ),
             ToolDefinition(
                 name="schedule",
@@ -42,6 +43,7 @@ class SocialAgent(BaseAgent):
                     "content": {"description": "Text content to schedule", "required": True},
                     "time": {"description": "ISO datetime or relative time", "required": True},
                 },
+                estimated_seconds=1,
             ),
             ToolDefinition(
                 name="analytics",
@@ -58,6 +60,7 @@ class SocialAgent(BaseAgent):
                     "channel": {"description": "Platform to view analytics for", "required": False, "options": ["x", "linkedin", "all"], "default": "all"},
                     "days": {"description": "Number of days to look back", "required": False, "default": "7"},
                 },
+                estimated_seconds=1,
             ),
         ]
 

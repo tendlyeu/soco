@@ -22,6 +22,7 @@ class ToolDefinition:
     required_integrations: list[str] = field(default_factory=list)
     parameters: dict[str, dict[str, Any]] = field(default_factory=dict)
     # parameter format: {"name": {"description": str, "required": bool, "default": str|None, "options": list|None}}
+    estimated_seconds: int = 10  # approx wall-clock time for user-facing ETA
 
 
 @dataclass

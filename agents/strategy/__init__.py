@@ -33,6 +33,7 @@ class StrategyAgent(BaseAgent):
                     "stage": {"description": "Launch phase", "required": False, "default": "full", "options": ["pre-launch", "launch-day", "post-launch", "full"]},
                     "channels": {"description": "Comma-separated launch channels", "required": False},
                 },
+                estimated_seconds=20,
             ),
             ToolDefinition(
                 name="pricing",
@@ -50,6 +51,7 @@ class StrategyAgent(BaseAgent):
                     "model": {"description": "Pricing model", "required": False, "options": ["freemium", "tiered", "usage-based", "flat-rate", "hybrid"]},
                     "competitors": {"description": "Comma-separated competitor names", "required": False},
                 },
+                estimated_seconds=20,
             ),
             ToolDefinition(
                 name="referral",
@@ -67,6 +69,7 @@ class StrategyAgent(BaseAgent):
                     "type": {"description": "Program type", "required": False, "default": "two-sided", "options": ["one-sided", "two-sided", "tiered", "affiliate"]},
                     "incentive": {"description": "Incentive type", "required": False, "default": "discount", "options": ["discount", "credit", "cash", "feature-unlock"]},
                 },
+                estimated_seconds=15,
             ),
             ToolDefinition(
                 name="product-context",
@@ -90,6 +93,7 @@ class StrategyAgent(BaseAgent):
                     "competitors": {"description": "Comma-separated competitor names", "required": False},
                     "value-proposition": {"description": "Core value proposition", "required": False},
                 },
+                estimated_seconds=1,
             ),
             ToolDefinition(
                 name="ideas",
@@ -107,6 +111,7 @@ class StrategyAgent(BaseAgent):
                     "count": {"description": "Number of ideas", "required": False, "default": "10"},
                     "channel": {"description": "Focus on specific channel", "required": False},
                 },
+                estimated_seconds=20,
             ),
             ToolDefinition(
                 name="psychology",
@@ -124,6 +129,7 @@ class StrategyAgent(BaseAgent):
                     "principle": {"description": "Specific principle to apply", "required": False},
                     "goal": {"description": "Desired outcome", "required": False, "options": ["conversion", "retention", "activation", "referral"]},
                 },
+                estimated_seconds=20,
             ),
         ]
 

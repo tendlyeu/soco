@@ -1,12 +1,12 @@
 """XAI/Grok integration wrapper."""
 import os
-from typing import Optional
+from typing import AsyncIterator, Optional
 
 from .base import IntegrationBackend
 
 
 class XaiIntegration(IntegrationBackend):
-    """Wraps the OpenAI client pointed at x.ai for content generation."""
+    """Wraps the AsyncOpenAI client pointed at x.ai for content generation."""
 
     name = "xai"
 
@@ -21,8 +21,13 @@ class XaiIntegration(IntegrationBackend):
     @property
     def client(self):
         if self._client is None:
-            from openai import OpenAI
-            self._client = OpenAI(api_key=self.api_key, base_url="https://api.x.ai/v1")
+            from openai import AsyncOpenAI
+            self._client = AsyncOpenAI(
+                api_key=self.api_key,
+                base_url="https://api.x.ai/v1",
+                timeout=90.0,
+                max_retries=1,
+            )
         return self._client
 
     async def generate(
@@ -33,7 +38,7 @@ class XaiIntegration(IntegrationBackend):
         max_tokens: int = 1500,
     ) -> str:
         """Generate text using XAI/Grok. Returns the assistant message content."""
-        response = self.client.chat.completions.create(
+        response = await self.client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": system},
@@ -43,3 +48,26 @@ class XaiIntegration(IntegrationBackend):
             max_tokens=max_tokens,
         )
         return response.choices[0].message.content.strip()
+
+    async def generate_stream(
+        self,
+        system: str,
+        user: str,
+        temperature: float = 0.7,
+        max_tokens: int = 1500,
+    ) -> AsyncIterator[str]:
+        """Stream tokens from XAI/Grok. Yields text chunks as they arrive."""
+        stream = await self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            temperature=temperature,
+            max_tokens=max_tokens,
+            stream=True,
+        )
+        async for chunk in stream:
+            delta = chunk.choices[0].delta if chunk.choices else None
+            if delta and delta.content:
+                yield delta.content

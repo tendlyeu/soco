@@ -33,6 +33,7 @@ class SeoAgent(BaseAgent):
                     "url": {"description": "URL to audit", "required": True},
                     "depth": {"description": "Audit depth", "required": False, "default": "standard", "options": ["shallow", "standard", "deep"]},
                 },
+                estimated_seconds=25,
             ),
             ToolDefinition(
                 name="programmatic",
@@ -49,6 +50,7 @@ class SeoAgent(BaseAgent):
                     "keyword-pattern": {"description": "Keyword pattern with variables", "required": False},
                     "count": {"description": "Number of example pages to generate", "required": False, "default": "5"},
                 },
+                estimated_seconds=15,
             ),
             ToolDefinition(
                 name="ai-seo",
@@ -66,6 +68,7 @@ class SeoAgent(BaseAgent):
                     "url": {"description": "URL to analyze for AI search optimization", "required": False},
                     "format": {"description": "Content format", "required": False, "default": "recommendations", "options": ["recommendations", "faq", "structured"]},
                 },
+                estimated_seconds=20,
             ),
             ToolDefinition(
                 name="schema-markup",
@@ -84,6 +87,7 @@ class SeoAgent(BaseAgent):
                     "type": {"description": "Schema type to generate", "required": False, "options": ["Organization", "Product", "FAQ", "Article", "SoftwareApplication", "WebSite"]},
                     "name": {"description": "Entity name for schema generation", "required": False},
                 },
+                estimated_seconds=20,
             ),
             ToolDefinition(
                 name="competitor-alternatives",
@@ -101,6 +105,7 @@ class SeoAgent(BaseAgent):
                     "competitors": {"description": "Comma-separated competitor names", "required": False},
                     "product": {"description": "Your product name for comparison", "required": False},
                 },
+                estimated_seconds=25,
             ),
         ]
 

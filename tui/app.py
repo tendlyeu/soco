@@ -198,6 +198,8 @@ class SocoApp:
 
     async def _execute_agent_command(self, agent_name: str, tool_name: str, args: dict) -> None:
         """Route to the appropriate agent and execute."""
+        import time
+
         agent, resolved_tool = self.registry.resolve(f"{agent_name}:{tool_name}")
 
         if not agent:
@@ -207,18 +209,23 @@ class SocoApp:
             self.console.print(f"[red]Unknown tool: '{agent_name}:{tool_name}'. Type 'help {agent_name}' for tools.[/red]")
             return
 
-        self.console.print(f"[cyan]Running {agent_name}:{resolved_tool}...[/cyan]")
+        # Show ETA from tool definition
+        tool_def = agent.resolve_tool(resolved_tool)
+        eta = tool_def.estimated_seconds if tool_def else 10
+        self.console.print(f"[cyan]Running {agent_name}:{resolved_tool}...[/cyan] [dim](~{eta}s)[/dim]")
 
+        t0 = time.monotonic()
         result = await agent.execute(resolved_tool, args, self.context)
+        elapsed = time.monotonic() - t0
 
         if result.status == ToolStatus.SUCCESS:
-            self.console.print(f"[green]Success[/green]")
+            self.console.print(f"[green]Success[/green] [dim]({elapsed:.1f}s)[/dim]")
             if result.output:
                 self.console.print(result.output)
         elif result.status == ToolStatus.NEEDS_INPUT:
             self.console.print(f"[yellow]Needs input:[/yellow] {result.follow_up_prompt or result.output}")
         else:
-            self.console.print(f"[red]Error:[/red] {result.error or result.output}")
+            self.console.print(f"[red]Error:[/red] [dim]({elapsed:.1f}s)[/dim] {result.error or result.output}")
 
     async def _handle_input(self, user_input: str) -> None:
         text = user_input.strip()
