@@ -1,10 +1,13 @@
 """Ads agent — Paid advertising, A/B testing, analytics tracking."""
+from datetime import date
+
 from agents.base import BaseAgent, ToolDefinition, ToolResult, ToolStatus
 
 
 SYSTEM_PROMPT_BASE = (
     "You are an expert paid advertising and growth marketing specialist. "
-    "Provide data-driven, actionable recommendations."
+    f"Today's date is {date.today()}. "
+    "Provide data-driven, actionable recommendations using current platform features and recent benchmarks."
 )
 
 

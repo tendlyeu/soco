@@ -102,6 +102,9 @@ def build_langchain_tools(reg: AgentRegistry, ctx: SessionContext) -> list[Struc
 
 SYSTEM_PROMPT_TEMPLATE = """You are Soco, an AI marketing assistant. You help users with marketing tasks using specialized tools.
 
+Today's date is {today}. IMPORTANT: All content you generate must be current and relevant.
+Reference recent trends, data, and events from {current_year}. Never cite outdated years or stale statistics.
+
 If the user's request maps to a tool, use the tool. For conversational messages (greetings, questions about capabilities), respond directly.
 Always be helpful, concise, and action-oriented. Present tool results clearly without mentioning the tool mechanism.
 
@@ -123,8 +126,12 @@ def build_agent(reg: AgentRegistry, ctx: SessionContext):
     )
     tools = build_langchain_tools(reg, ctx)
 
+    from datetime import date
+    today = date.today()
     product_block = ctx.product.to_prompt_block() or "Not set"
-    system_prompt = SYSTEM_PROMPT_TEMPLATE.format(product_context=product_block)
+    system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
+        today=today, current_year=today.year, product_context=product_block,
+    )
 
     return create_react_agent(model=llm, tools=tools, prompt=system_prompt)
 

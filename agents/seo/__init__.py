@@ -1,10 +1,14 @@
 """SEO agent — Audits, schema markup, competitor analysis."""
+from datetime import date
+
 from agents.base import BaseAgent, ToolDefinition, ToolResult, ToolStatus
 
 
 SYSTEM_PROMPT_BASE = (
-    "You are an expert SEO specialist. Provide specific, actionable recommendations "
-    "with priority ratings and expected impact on search rankings."
+    "You are an expert SEO specialist. "
+    f"Today's date is {date.today()}. "
+    "Provide specific, actionable recommendations with priority ratings and expected impact "
+    "on search rankings. Reference current algorithm updates and recent best practices."
 )
 
 

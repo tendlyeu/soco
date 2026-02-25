@@ -34,7 +34,7 @@ class SocialAgent(BaseAgent):
                           "Future: integrate with Buffer via Composio.",
                 aliases=["queue"],
                 examples=[
-                    'social:schedule channel:x content:"Monday motivation!" time:"2024-03-01 09:00"',
+                    'social:schedule channel:x content:"Monday motivation!" time:"2026-03-02 09:00"',
                 ],
                 required_integrations=["arcade"],
                 parameters={

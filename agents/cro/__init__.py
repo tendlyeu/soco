@@ -1,11 +1,15 @@
 """CRO agent — Conversion rate optimization and page analysis."""
+from datetime import date
+
 from agents.base import BaseAgent, ToolDefinition, ToolResult, ToolStatus
 
 
 SYSTEM_PROMPT_BASE = (
     "You are an expert conversion rate optimization (CRO) specialist. "
+    f"Today's date is {date.today()}. "
     "Analyze the provided page data and give specific, actionable recommendations "
-    "with priority ratings (high/medium/low) and expected impact."
+    "with priority ratings (high/medium/low) and expected impact. "
+    "Reference current best practices and recent industry benchmarks."
 )
 
 

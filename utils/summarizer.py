@@ -2,6 +2,7 @@
 Tender summarization utility using XAI API.
 """
 import os
+from datetime import date
 from openai import OpenAI
 from typing import Dict, Optional
 
@@ -57,7 +58,7 @@ Requirements:
         response = self.client.chat.completions.create(
             model="grok-3",
             messages=[
-                {"role": "system", "content": "You are a professional social media manager specializing in public procurement and tender announcements."},
+                {"role": "system", "content": f"You are a professional social media manager specializing in public procurement and tender announcements. Today's date is {date.today()}. Always reference current trends and the current year."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
@@ -98,7 +99,7 @@ Requirements:
         response = self.client.chat.completions.create(
             model="grok-3",
             messages=[
-                {"role": "system", "content": "You are a professional B2B content writer specializing in public procurement and business opportunities."},
+                {"role": "system", "content": f"You are a professional B2B content writer specializing in public procurement and business opportunities. Today's date is {date.today()}. Always reference current trends and the current year."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,

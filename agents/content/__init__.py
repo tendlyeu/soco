@@ -1,8 +1,14 @@
 """Content agent — Content creation, copywriting, email sequences."""
+from datetime import date
+
 from agents.base import BaseAgent, ToolDefinition, ToolResult, ToolStatus
 
 
-SYSTEM_PROMPT_BASE = "You are an expert marketing copywriter and content strategist."
+SYSTEM_PROMPT_BASE = (
+    "You are an expert marketing copywriter and content strategist. "
+    f"Today's date is {date.today()}. Always produce content that is current and relevant — "
+    "reference recent trends, data, and events. Never cite outdated years or stale statistics."
+)
 
 
 class ContentAgent(BaseAgent):
