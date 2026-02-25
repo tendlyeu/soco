@@ -1,0 +1,17 @@
+{
+  "name": "Soco Marketing CLI",
+  "short_name": "Soco",
+  "description": "AI marketing assistant — 6 agents, 32 tools",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#f9fafb",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

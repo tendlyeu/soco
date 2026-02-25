@@ -6,7 +6,7 @@ import sys
 import uuid
 from pathlib import Path
 
-from starlette.responses import StreamingResponse
+from starlette.responses import StreamingResponse, FileResponse
 
 # Ensure project root is importable
 ROOT = Path(__file__).parent.parent
@@ -200,7 +200,11 @@ async def agent_chat_stream(user_msg: str, history: list, session_list: list):
 
 # ── In-memory chat store ─────────────────────────────────────────────────
 
-chat_sessions: dict[str, list] = {}  # session_id -> [{role, content}]
+chat_sessions: dict[str, list] = {}           # session_id -> [{role, content}]
+user_chats: dict[str, list[str]] = {}         # user_id (cookie) -> [sid, ...] newest first
+shared_chats: dict[str, str] = {}             # share_id -> session_id
+
+STATIC_DIR = Path(__file__).parent / "static"
 
 # ── CSS ──────────────────────────────────────────────────────────────────
 
@@ -211,6 +215,8 @@ css = Style("""
     --accent: #2563eb; --accent2: #7c3aed; --green: #16a34a;
     --red: #dc2626; --yellow: #d97706;
     --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -231,6 +237,7 @@ body {
 .left-pane {
     background: var(--surface); border-right: 1px solid var(--border);
     display: flex; flex-direction: column; overflow: hidden;
+    z-index: 200;
 }
 .left-header {
     padding: 1rem 1.25rem; border-bottom: 1px solid var(--surface2);
@@ -307,6 +314,34 @@ body {
 }
 .ctx-save:hover { opacity: .9; }
 
+/* ── Chat History (left pane) ──────────────────────────────────── */
+.chat-history { padding: .5rem .75rem; border-bottom: 1px solid var(--surface2); }
+.chat-history-label {
+    font-size: .65rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .05em; color: var(--muted); margin-bottom: .35rem;
+}
+.chat-new-btn {
+    width: 100%; padding: .4rem .6rem; background: var(--gradient);
+    color: #fff; border: none; border-radius: .5rem; font-size: .75rem;
+    font-weight: 600; cursor: pointer; margin-bottom: .5rem;
+    transition: opacity .15s; min-height: 2rem;
+}
+.chat-new-btn:hover { opacity: .9; }
+.chat-history-item {
+    display: flex; align-items: center; gap: .4rem;
+    width: 100%; text-align: left; background: none; border: none;
+    color: var(--muted); padding: .35rem .5rem; cursor: pointer;
+    font-size: .75rem; border-radius: .4rem; transition: all .15s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.chat-history-item:hover { background: var(--surface2); color: var(--text); }
+.chat-history-item.active { background: #eff6ff; color: var(--accent); font-weight: 600; }
+.chat-history-item .chat-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+    background: var(--border);
+}
+.chat-history-item.active .chat-dot { background: var(--accent); }
+
 /* ── Center Pane: Chat ─────────────────────────────────────────── */
 .center-pane {
     display: flex; flex-direction: column; overflow: hidden;
@@ -316,8 +351,9 @@ body {
     display: flex; align-items: center; justify-content: space-between;
     padding: .65rem 1.25rem; background: var(--surface);
     border-bottom: 1px solid var(--border); min-height: 2.75rem;
-    position: relative; z-index: 101;
+    position: relative; z-index: 101; gap: .5rem;
 }
+.chat-header-left { display: flex; align-items: center; gap: .5rem; }
 .chat-header-title { font-size: .9rem; font-weight: 600; color: var(--text); }
 .chat-header-actions { display: flex; gap: .5rem; align-items: center; }
 .think-badge {
@@ -335,13 +371,49 @@ body {
 .think-btn:hover { border-color: #93c5fd; color: var(--accent); background: #eff6ff; }
 .think-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+/* Share button */
+.share-btn {
+    padding: .35rem .55rem; background: transparent;
+    border: 1px solid var(--border); border-radius: .5rem;
+    color: var(--muted); font-size: .85rem; cursor: pointer;
+    transition: all .15s; display: flex; align-items: center;
+    line-height: 1;
+}
+.share-btn:hover { border-color: #93c5fd; color: var(--accent); background: #eff6ff; }
+
+/* Mobile menu button */
+.mobile-menu-btn {
+    display: none; padding: .35rem .5rem; background: transparent;
+    border: 1px solid var(--border); border-radius: .5rem;
+    color: var(--text); font-size: 1.1rem; cursor: pointer;
+    line-height: 1; transition: all .15s;
+}
+.mobile-menu-btn:hover { background: var(--surface2); }
+
+/* Left pane overlay backdrop */
+.left-overlay {
+    display: none; position: fixed; inset: 0; z-index: 199;
+    background: rgba(0,0,0,.4); backdrop-filter: blur(2px);
+}
+.left-overlay.visible { display: block; }
+
+/* Share toast */
+.share-toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: #fff; padding: .6rem 1.25rem;
+    border-radius: .75rem; font-size: .85rem; font-weight: 500;
+    z-index: 9999; opacity: 0; transition: all .3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+.share-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
 /* Messages area */
 .messages {
     flex: 1; overflow-y: auto; padding: 1.25rem;
     display: flex; flex-direction: column; gap: .75rem;
 }
 .messages:empty::before {
-    content: "Ask me anything about marketing — I'll pick the right tool and get it done.";
+    content: "Ask me anything about marketing \\2014  I'll pick the right tool and get it done.";
     color: var(--muted); text-align: center; padding: 4rem 2rem;
     font-size: .9rem; font-style: italic;
 }
@@ -391,6 +463,7 @@ body {
     display: flex; align-items: flex-end; gap: .5rem;
     padding: .75rem 1.25rem; background: var(--surface);
     border-top: 1px solid var(--border);
+    padding-bottom: calc(.75rem + var(--safe-bottom));
 }
 .chat-textarea {
     flex: 1; min-width: 0; width: 100%;
@@ -464,11 +537,86 @@ body {
     max-height: 200px; overflow-y: auto;
 }
 
-/* ── Responsive ────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-    .app { grid-template-columns: 1fr; padding-right: 0 !important; }
-    .left-pane { display: none; }
-    .right-pane { width: 100%; right: -100%; }
+/* ── Share View ────────────────────────────────────────────────── */
+.share-page {
+    max-width: 720px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column;
+}
+.share-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.25rem; background: var(--surface);
+    border-bottom: 1px solid var(--border); gap: .5rem;
+}
+.share-header-title {
+    font-size: .9rem; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: .5rem;
+}
+.share-header-actions { display: flex; gap: .5rem; }
+.share-link-btn {
+    padding: .4rem .8rem; background: var(--gradient); color: #fff;
+    border: none; border-radius: .5rem; font-size: .75rem;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: opacity .15s;
+}
+.share-link-btn:hover { opacity: .9; }
+.share-copy-btn {
+    padding: .4rem .8rem; background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: .5rem;
+    font-size: .75rem; cursor: pointer; transition: all .15s;
+}
+.share-copy-btn:hover { border-color: #93c5fd; color: var(--accent); }
+.share-messages {
+    flex: 1; overflow-y: auto; padding: 1.25rem;
+    display: flex; flex-direction: column; gap: .75rem;
+}
+
+/* ── Responsive: Mobile (<768px) ───────────────────────────────── */
+@media (max-width: 767px) {
+    .app {
+        grid-template-columns: 1fr; padding-right: 0 !important;
+    }
+    .left-pane {
+        position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+        transition: left .3s ease; box-shadow: 4px 0 24px rgba(0,0,0,.1);
+    }
+    .left-pane.open { left: 0; }
+    .right-pane { display: none !important; }
+    .chat-header-actions .think-btn,
+    .chat-header-actions .think-badge { display: none; }
+    .mobile-menu-btn { display: flex; }
+    .chat-send, .suggest-btn, .chat-new-btn,
+    .share-btn, .tool-item, .agent-toggle { min-height: 44px; }
+    .suggestions {
+        flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; padding-bottom: .75rem;
+    }
+    .suggestions::-webkit-scrollbar { display: none; }
+    .suggest-btn { white-space: nowrap; flex-shrink: 0; }
+    .msg { max-width: 92%; }
+    .chat-form { padding: .5rem .75rem; padding-bottom: calc(.5rem + var(--safe-bottom)); }
+    .chat-header { padding: .5rem .75rem; }
+    .messages { padding: .75rem; }
+}
+
+/* ── Responsive: Tablet (768px–1024px) ─────────────────────────── */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .app {
+        grid-template-columns: 1fr; padding-right: 0 !important;
+    }
+    .left-pane {
+        position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+        transition: left .3s ease; box-shadow: 4px 0 24px rgba(0,0,0,.1);
+    }
+    .left-pane.open { left: 0; }
+    .right-pane { width: 380px; right: -400px; }
+    .right-pane.open { right: 0; }
+    .app:not(.pane-closed) { padding-right: 380px; }
+    .mobile-menu-btn { display: flex; }
+}
+
+/* ── Responsive: Desktop (>1024px) ─────────────────────────────── */
+@media (min-width: 1025px) {
+    .left-pane { position: static !important; left: auto !important; }
 }
 """)
 
@@ -478,15 +626,80 @@ fonts = (
     Link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"),
 )
 
+pwa_meta = (
+    Meta(name="theme-color", content="#2563eb"),
+    Meta(name="apple-mobile-web-app-capable", content="yes"),
+    Meta(name="viewport", content="width=device-width, initial-scale=1, viewport-fit=cover"),
+    Link(rel="manifest", href="/manifest.json"),
+    Link(rel="icon", href="/icon.svg", type="image/svg+xml"),
+)
+
 app, rt = fast_app(
     pico=False,
-    hdrs=[css, *fonts, Script(src="https://unpkg.com/htmx.org@2.0.4")],
+    hdrs=[css, *fonts, *pwa_meta, Script(src="https://unpkg.com/htmx.org@2.0.4")],
     secret_key=os.getenv("SESSION_SECRET", "soco-dev-key-change-me"),
 )
 
+# ── Helpers ───────────────────────────────────────────────────────────────
+
+def _get_chat_title(sid: str) -> str:
+    """First user message truncated to ~35 chars, or fallback."""
+    msgs = chat_sessions.get(sid, [])
+    for m in msgs:
+        if m["role"] == "user":
+            text = m["content"]
+            return text[:35] + ("..." if len(text) > 35 else "")
+    return "New chat"
+
+
+def _ensure_user(sess) -> str:
+    """Return user_id cookie, creating one if needed."""
+    if "uid" not in sess:
+        sess["uid"] = str(uuid.uuid4())
+    return sess["uid"]
+
+
+def _ensure_session(sess) -> str:
+    """Return current session id, creating one if needed. Links to user."""
+    uid = _ensure_user(sess)
+    if "sid" not in sess:
+        sess["sid"] = str(uuid.uuid4())
+    sid = sess["sid"]
+    if sid not in chat_sessions:
+        chat_sessions[sid] = []
+    if uid not in user_chats:
+        user_chats[uid] = []
+    if sid not in user_chats[uid]:
+        user_chats[uid].insert(0, sid)
+    return sid
+
 # ── Components ───────────────────────────────────────────────────────────
 
-def left_pane():
+def chat_history_section(uid: str, current_sid: str):
+    """Render chat history list for the left pane."""
+    sids = user_chats.get(uid, [])
+    items = []
+    for sid in sids[:20]:
+        title = _get_chat_title(sid)
+        is_active = sid == current_sid
+        items.append(
+            Button(
+                Span(cls="chat-dot"),
+                Span(title),
+                cls=f"chat-history-item{'  active' if is_active else ''}",
+                onclick=f"loadChat('{sid}')",
+            )
+        )
+
+    return Div(
+        Button("+ New Chat", cls="chat-new-btn", onclick="newChat()"),
+        Div("Chats", cls="chat-history-label") if items else "",
+        *items,
+        cls="chat-history",
+    )
+
+
+def left_pane(uid: str = "", current_sid: str = ""):
     agents = registry.all_agents()
     total = sum(len(a.get_tools()) for a in agents)
 
@@ -549,14 +762,23 @@ def left_pane():
             cls="left-header",
         ),
         int_dots,
+        chat_history_section(uid, current_sid),
         Div(*groups, cls="left-body"),
         ctx_form,
-        cls="left-pane",
+        cls="left-pane", id="left-pane",
     )
 
 
-def chat_messages_div():
-    return Div(id="messages", cls="messages")
+def chat_messages_div(sid: str = ""):
+    """Render messages container, pre-populated if loading existing chat."""
+    msgs = chat_sessions.get(sid, [])
+    children = []
+    for m in msgs:
+        role_cls = "msg-user" if m["role"] == "user" else "msg-assistant"
+        children.append(
+            Div(Div(m["content"], cls="msg-bubble"), cls=f"msg {role_cls}")
+        )
+    return Div(*children, id="messages", cls="messages")
 
 
 def suggestion_buttons():
@@ -568,7 +790,7 @@ def suggestion_buttons():
     ]
     return Div(
         *[Button(s, cls="suggest-btn", onclick=f"fillChat(`{s}`)") for s in suggestions],
-        cls="suggestions",
+        cls="suggestions", id="suggestions",
     )
 
 
@@ -588,22 +810,48 @@ def thinking_step(step_type, command, body):
 
 # ── Routes ───────────────────────────────────────────────────────────────
 
+@rt("/manifest.json")
+def manifest():
+    return FileResponse(STATIC_DIR / "manifest.json", media_type="application/manifest+json")
+
+@rt("/sw.js")
+def service_worker():
+    return FileResponse(STATIC_DIR / "sw.js", media_type="application/javascript",
+                        headers={"Service-Worker-Allowed": "/"})
+
+@rt("/icon.svg")
+def icon():
+    return FileResponse(STATIC_DIR / "icon.svg", media_type="image/svg+xml")
+
+
 @rt("/")
-def index(sess):
-    if "sid" not in sess:
-        sess["sid"] = str(uuid.uuid4())
-    sid = sess["sid"]
-    if sid not in chat_sessions:
-        chat_sessions[sid] = []
+def index(sess, chat: str = ""):
+    uid = _ensure_user(sess)
+
+    # Load specific chat if requested
+    if chat and chat in chat_sessions:
+        sess["sid"] = chat
+    sid = _ensure_session(sess)
+
+    # Hide suggestions if chat already has messages
+    has_messages = bool(chat_sessions.get(sid))
 
     return Title("soco"), Div(
+        # Left pane overlay backdrop
+        Div(id="left-overlay", cls="left-overlay", onclick="toggleLeftPane()"),
         # Left pane
-        left_pane(),
+        left_pane(uid=uid, current_sid=sid),
         # Center pane
         Div(
             Div(
-                Span("soco agent", cls="chat-header-title"),
                 Div(
+                    Button("\u2630", cls="mobile-menu-btn", onclick="toggleLeftPane()"),
+                    Span("soco agent", cls="chat-header-title"),
+                    cls="chat-header-left",
+                ),
+                Div(
+                    Button("\u2B06", cls="share-btn", onclick="shareChat()",
+                           title="Share chat"),
                     Span("0", id="think-count", cls="think-badge"),
                     Button("Thinking", id="think-btn", cls="think-btn active",
                            onclick="toggleThinking()"),
@@ -611,8 +859,8 @@ def index(sess):
                 ),
                 cls="chat-header",
             ),
-            chat_messages_div(),
-            suggestion_buttons(),
+            chat_messages_div(sid),
+            suggestion_buttons() if not has_messages else Div(id="suggestions"),
             Form(
                 Textarea(
                     id="chat-input", name="msg",
@@ -638,22 +886,42 @@ def index(sess):
             Div(id="thinking-steps", cls="right-body"),
             id="right-pane", cls="right-pane open",
         ),
+        # Share toast
+        Div("Link copied!", id="share-toast", cls="share-toast"),
         cls="app",
     ), Script("""
         function toggleGroup(id) {
             const el = document.getElementById(id);
             const btn = document.getElementById('btn-' + id);
-            el.classList.toggle('open');
-            btn.classList.toggle('open');
+            if (el) el.classList.toggle('open');
+            if (btn) btn.classList.toggle('open');
         }
         function toggleThinking() {
-            document.getElementById('right-pane').classList.toggle('open');
-            document.getElementById('think-btn').classList.toggle('active');
+            const rp = document.getElementById('right-pane');
+            const tb = document.getElementById('think-btn');
+            if (!rp || !tb) return;
+            if (window.innerWidth < 768) return; // no-op on mobile
+            rp.classList.toggle('open');
+            tb.classList.toggle('active');
             document.querySelector('.app').classList.toggle('pane-closed');
+        }
+        function toggleLeftPane() {
+            const lp = document.getElementById('left-pane');
+            const ov = document.getElementById('left-overlay');
+            if (!lp) return;
+            lp.classList.toggle('open');
+            if (ov) ov.classList.toggle('visible');
         }
         function fillChat(text) {
             const input = document.getElementById('chat-input');
             if (input) { input.value = text; input.focus(); autoResize(input); }
+            // Close left pane on mobile after selection
+            if (window.innerWidth <= 1024) {
+                const lp = document.getElementById('left-pane');
+                const ov = document.getElementById('left-overlay');
+                if (lp) lp.classList.remove('open');
+                if (ov) ov.classList.remove('visible');
+            }
         }
         function autoResize(el) {
             el.style.height = 'auto';
@@ -678,12 +946,37 @@ def index(sess):
         }
         function addThinkStep(cls, title, body) {
             const steps = document.getElementById('thinking-steps');
+            if (!steps) return;
             const step = document.createElement('div');
             step.className = 'think-step ' + cls;
             step.innerHTML = '<div class="think-step-type">' + escapeHtml(title) + '</div>'
                 + '<div class="think-step-body">' + escapeHtml(body) + '</div>';
             steps.appendChild(step);
             steps.scrollTop = steps.scrollHeight;
+        }
+        function loadChat(sid) {
+            window.location.href = '/?chat=' + encodeURIComponent(sid);
+        }
+        function newChat() {
+            fetch('/chat/new', { method: 'POST' })
+                .then(r => r.json())
+                .then(d => { window.location.href = '/?chat=' + d.sid; });
+        }
+        async function shareChat() {
+            try {
+                const resp = await fetch('/chat/share', { method: 'POST' });
+                const data = await resp.json();
+                if (data.url) {
+                    await navigator.clipboard.writeText(data.url);
+                    const toast = document.getElementById('share-toast');
+                    if (toast) {
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 2500);
+                    }
+                }
+            } catch (err) {
+                console.error('Share failed:', err);
+            }
         }
         async function sendMessage(e) {
             e.preventDefault();
@@ -695,6 +988,10 @@ def index(sess):
             sendBtn.disabled = true;
             input.value = '';
             autoResize(input);
+
+            // Hide suggestions after first message
+            const sug = document.getElementById('suggestions');
+            if (sug) sug.style.display = 'none';
 
             const messages = document.getElementById('messages');
 
@@ -764,7 +1061,8 @@ def index(sess):
                             const stepCls = data.status === 'success' ? 'tool-call' : 'error';
                             addThinkStep(stepCls, data.status + ': ' + data.command, (data.output || '').slice(0, 500));
                         } else if (evtType === 'done') {
-                            document.getElementById('think-count').textContent = String(data.tool_count || 0);
+                            const tc = document.getElementById('think-count');
+                            if (tc) tc.textContent = String(data.tool_count || 0);
                         }
                     }
                 }
@@ -782,6 +1080,11 @@ def index(sess):
         document.addEventListener('DOMContentLoaded', () => {
             const m = document.getElementById('messages');
             if (m) obs.observe(m, {childList: true, subtree: true});
+            scrollChat();
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            }
         });
     """)
 
@@ -803,6 +1106,90 @@ async def chat(msg: str, sess):
         agent_chat_stream(user_msg, history, chat_sessions[sid]),
         media_type="text/event-stream",
     )
+
+
+@rt("/chat/new", methods=["POST"])
+def chat_new(sess):
+    uid = _ensure_user(sess)
+    new_sid = str(uuid.uuid4())
+    sess["sid"] = new_sid
+    chat_sessions[new_sid] = []
+    if uid not in user_chats:
+        user_chats[uid] = []
+    user_chats[uid].insert(0, new_sid)
+    return {"sid": new_sid}
+
+
+@rt("/chat/share", methods=["POST"])
+def chat_share(sess, req):
+    sid = sess.get("sid")
+    if not sid or sid not in chat_sessions or not chat_sessions[sid]:
+        return {"error": "No chat to share"}
+
+    # Check if already shared
+    for share_id, linked_sid in shared_chats.items():
+        if linked_sid == sid:
+            url = f"{req.base_url}s/{share_id}"
+            return {"url": url, "share_id": share_id}
+
+    share_id = uuid.uuid4().hex[:10]
+    shared_chats[share_id] = sid
+    url = f"{req.base_url}s/{share_id}"
+    return {"url": url, "share_id": share_id}
+
+
+@rt("/s/{share_id}")
+def shared_view(share_id: str):
+    sid = shared_chats.get(share_id)
+    if not sid or sid not in chat_sessions:
+        return Title("Not found"), Div(
+            H2("Chat not found", style="text-align:center;padding:4rem;color:var(--muted);"),
+        )
+
+    msgs = chat_sessions[sid]
+    msg_els = []
+    for m in msgs:
+        role_cls = "msg-user" if m["role"] == "user" else "msg-assistant"
+        msg_els.append(
+            Div(Div(m["content"], cls="msg-bubble"), cls=f"msg {role_cls}")
+        )
+
+    return Title("Shared Chat — soco"), css, Div(
+        Div(
+            Div(
+                Span("\u25C6", style="color:var(--accent);font-size:1.1rem;"),
+                Span("Shared conversation", style="font-weight:600;font-size:.9rem;"),
+                cls="share-header-title",
+            ),
+            Div(
+                A("Open in Soco", href="/", cls="share-link-btn"),
+                Button("Copy text", cls="share-copy-btn", onclick="copyChat()"),
+                cls="share-header-actions",
+            ),
+            cls="share-header",
+        ),
+        Div(*msg_els, cls="share-messages"),
+        Div(id="share-toast", cls="share-toast"),
+        cls="share-page",
+    ), Script("""
+        function copyChat() {
+            const msgs = document.querySelectorAll('.msg');
+            let text = '';
+            msgs.forEach(m => {
+                const role = m.classList.contains('msg-user') ? 'You' : 'Soco';
+                const bubble = m.querySelector('.msg-bubble');
+                if (bubble) text += role + ': ' + bubble.textContent.trim() + '\\n\\n';
+            });
+            navigator.clipboard.writeText(text.trim()).then(() => {
+                const toast = document.getElementById('share-toast');
+                if (toast) {
+                    toast.textContent = 'Copied!';
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 2500);
+                }
+            });
+        }
+    """)
 
 
 @rt("/context", methods=["POST"])
