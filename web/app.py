@@ -931,7 +931,9 @@ def index(sess, chat: str = ""):
         }
         function fillChat(text) {
             const input = document.getElementById('chat-input');
-            if (input) { input.value = text; input.focus(); autoResize(input); }
+            if (!input) return;
+            input.value = text;
+            autoResize(input);
             // Close left pane on mobile after selection
             if (window.innerWidth <= 1024) {
                 const lp = document.getElementById('left-pane');
@@ -939,6 +941,9 @@ def index(sess, chat: str = ""):
                 if (lp) lp.classList.remove('open');
                 if (ov) ov.classList.remove('visible');
             }
+            // Submit immediately
+            const form = input.closest('form');
+            if (form) form.requestSubmit();
         }
         function autoResize(el) {
             el.style.height = 'auto';
