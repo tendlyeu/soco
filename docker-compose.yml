@@ -1,0 +1,22 @@
+services:
+  soco-web:
+    build: .
+    ports:
+      - "5001:5001"
+    environment:
+      - XAI_API_KEY
+      - XAI_MODEL
+      - ARCADE_API_KEY
+      - ARCADE_USER_ID
+      - ARCADE_USER_EMAIL
+      - ARCADE_USER_PASSWORD
+      - LINKEDIN_PAGE
+      - COMPOSIO_API_KEY
+      - SESSION_SECRET
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped

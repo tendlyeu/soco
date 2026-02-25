@@ -88,10 +88,18 @@ COMMANDS = {
     },
     "web": {
         "script": ROOT / "Home.py",
-        "summary": "Launch the Streamlit web dashboard",
+        "summary": "Launch the Streamlit web dashboard (legacy)",
         "usage": "python soco.py web",
         "runner": "streamlit",
         "options": [],
+    },
+    "ui": {
+        "script": ROOT / "web" / "app.py",
+        "summary": "Launch the FastHTML web UI",
+        "usage": "python soco.py ui [--port PORT]",
+        "options": [
+            ("--port PORT", "Port to run on (default: 5001)"),
+        ],
     },
 }
 
