@@ -570,6 +570,9 @@ body {
     display: flex; flex-direction: column; gap: .75rem;
 }
 
+/* Transition only after first paint (prevents slide-out flash on load) */
+.left-pane.animated { transition: left .3s ease; }
+
 /* ── Responsive: Mobile (<768px) ───────────────────────────────── */
 @media (max-width: 767px) {
     .app {
@@ -577,7 +580,7 @@ body {
     }
     .left-pane {
         position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
-        transition: left .3s ease; box-shadow: 4px 0 24px rgba(0,0,0,.1);
+        box-shadow: 4px 0 24px rgba(0,0,0,.1);
     }
     .left-pane.open { left: 0; }
     .right-pane { display: none !important; }
@@ -605,7 +608,7 @@ body {
     }
     .left-pane {
         position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
-        transition: left .3s ease; box-shadow: 4px 0 24px rgba(0,0,0,.1);
+        box-shadow: 4px 0 24px rgba(0,0,0,.1);
     }
     .left-pane.open { left: 0; }
     .right-pane { width: 380px; right: -400px; }
@@ -1081,6 +1084,10 @@ def index(sess, chat: str = ""):
             const m = document.getElementById('messages');
             if (m) obs.observe(m, {childList: true, subtree: true});
             scrollChat();
+            // Enable left-pane transition after first paint (prevents flash)
+            requestAnimationFrame(() => {
+                document.getElementById('left-pane')?.classList.add('animated');
+            });
             // Register service worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js').catch(() => {});
