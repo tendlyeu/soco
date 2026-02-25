@@ -364,34 +364,31 @@ body {
 @keyframes blink { 0%,50% { opacity: .7; } 51%,100% { opacity: 0; } }
 
 /* Chat input */
-.chat-input {
-    padding: .75rem 1.25rem; background: var(--bg);
-}
 .chat-form {
     display: flex; align-items: flex-end; gap: .5rem;
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: 1rem; padding: .25rem .4rem .25rem 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    transition: border-color .2s, box-shadow .2s;
+    padding: .75rem 1.25rem; background: var(--surface);
+    border-top: 1px solid var(--border);
 }
-.chat-form:focus-within { border-color: #93c5fd; }
 .chat-textarea {
-    flex: 1; padding: .5rem 0; border: none; background: transparent;
+    flex: 1; min-width: 0; width: 100%;
+    padding: .65rem 1rem; border: 1.5px solid var(--border);
+    border-radius: .75rem; background: var(--bg);
     color: var(--text); font-family: inherit; font-size: .9rem; line-height: 1.5;
-    resize: none; min-height: 2.5rem; max-height: 8rem;
-    overflow-y: hidden; outline: none;
+    resize: none; min-height: 2.75rem; max-height: 8rem;
+    overflow-y: hidden; outline: none; transition: border-color .2s;
 }
+.chat-textarea:focus { border-color: #93c5fd; }
 .chat-send {
-    padding: .5rem 1rem; background: var(--gradient); color: #fff;
+    padding: .65rem 1.25rem; background: var(--gradient); color: #fff;
     border: none; border-radius: .75rem; font-weight: 600; font-size: .85rem;
-    cursor: pointer; transition: opacity .15s, transform .15s; min-height: 2.5rem;
+    cursor: pointer; transition: opacity .15s, transform .15s; min-height: 2.75rem;
     flex-shrink: 0;
 }
 .chat-send:hover { opacity: .9; transform: scale(1.03); }
 .chat-send:disabled { opacity: .35; cursor: not-allowed; transform: none; }
 
 /* Suggestions */
-.suggestions { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .6rem; }
+.suggestions { display: flex; flex-wrap: wrap; gap: .5rem; padding: .5rem 1.25rem; }
 .suggest-btn {
     padding: .35rem .75rem; background: var(--surface);
     border: 1px solid var(--border); border-radius: 1.25rem;
@@ -592,24 +589,22 @@ def index(sess):
                 cls="chat-header",
             ),
             chat_messages_div(),
-            Div(
-                suggestion_buttons(),
-                Form(
-                    Textarea(
-                        id="chat-input", name="msg",
-                        placeholder="Ask me anything about marketing...",
-                        rows="1",
-                        onkeydown="handleKey(event)",
-                        oninput="autoResize(this)",
-                    ),
-                    Button("Send", type="submit", cls="chat-send", id="send-btn"),
-                    cls="chat-form",
-                    hx_post="/chat",
-                    hx_target="#messages",
-                    hx_swap="beforeend",
-                    hx_disabled_elt="#send-btn",
+            suggestion_buttons(),
+            Form(
+                Textarea(
+                    id="chat-input", name="msg",
+                    cls="chat-textarea",
+                    placeholder="Ask me anything about marketing...",
+                    rows="1",
+                    onkeydown="handleKey(event)",
+                    oninput="autoResize(this)",
                 ),
-                cls="chat-input",
+                Button("Send", type="submit", cls="chat-send", id="send-btn"),
+                cls="chat-form",
+                hx_post="/chat",
+                hx_target="#messages",
+                hx_swap="beforeend",
+                hx_disabled_elt="#send-btn",
             ),
             cls="center-pane",
         ),
