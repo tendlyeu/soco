@@ -352,14 +352,14 @@ All errors displayed in red in the output panel.
 
 ## Testing Credentials
 
-The implementation has been tested with the provided credentials:
+Set credentials in `.env` (never commit real keys):
 
 ```
-ARCADE_API_KEY=REDACTED_ARCADE_KEY
-XAI_API_KEY=REDACTED_XAI_KEY
-ARCADE_USER_EMAIL=julian@predictivelabs.co.uk
-ARCADE_USER_PASSWORD=REDACTED_PASSWORD
-ARCADE_USER_ID=julian@predictivelabs.co.uk
+ARCADE_API_KEY=your_arcade_key
+XAI_API_KEY=your_xai_key
+ARCADE_USER_EMAIL=your_email
+ARCADE_USER_PASSWORD=your_password
+ARCADE_USER_ID=your_user_id
 ```
 
 ## Documentation

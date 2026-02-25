@@ -111,7 +111,7 @@ First token is `agent:tool`, remaining tokens are `key:value` arguments. Quoted 
 | **seo** | 5 | Playwright + XAI | Technical audits, schema markup, AI SEO, competitor analysis |
 | **ads** | 3 | XAI + Composio | Campaign strategy, A/B testing, analytics tracking |
 
-See [docs/skills_readme.md](docs/skills_readme.md) for the full skills reference and [docs/tools_readme.md](docs/tools_readme.md) for detailed tool documentation.
+See [docs/skills_readme.md](docs/skills_readme.md) for the full skills reference, [docs/tools_readme.md](docs/tools_readme.md) for detailed tool documentation, and the [marketing skills repo](https://github.com/coreyhaines31/marketingskills/tree/main/tools) for the underlying tool prompts.
 
 ## Examples
 
