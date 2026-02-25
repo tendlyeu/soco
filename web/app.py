@@ -6,6 +6,8 @@ import sys
 import uuid
 from pathlib import Path
 
+from starlette.responses import StreamingResponse
+
 # Ensure project root is importable
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
@@ -127,13 +129,15 @@ def build_agent(reg: AgentRegistry, ctx: SessionContext):
     return create_react_agent(model=llm, tools=tools, prompt=system_prompt)
 
 
-async def agent_chat(user_msg: str, history: list) -> tuple[str, list]:
-    """Run the LangGraph ReAct agent loop."""
+async def agent_chat_stream(user_msg: str, history: list, session_list: list):
+    """Stream SSE events from the LangGraph ReAct agent. Appends final reply to session_list."""
     graph = build_agent(registry, soco_ctx)
     if graph is None:
-        return "XAI integration not configured. Set XAI_API_KEY in .env", []
+        yield f"event: token\ndata: {json.dumps({'text': 'XAI integration not configured. Set XAI_API_KEY in .env'})}\n\n"
+        session_list.append({"role": "assistant", "content": "XAI integration not configured."})
+        yield f"event: done\ndata: {json.dumps({'tool_count': 0})}\n\n"
+        return
 
-    # Convert history to LangChain message objects
     messages = []
     for h in history[-20:]:
         if h["role"] == "user":
@@ -142,39 +146,49 @@ async def agent_chat(user_msg: str, history: list) -> tuple[str, list]:
             messages.append(AIMessage(content=h["content"]))
     messages.append(HumanMessage(content=user_msg))
 
-    # Invoke the ReAct agent
-    result = await graph.ainvoke({"messages": messages})
+    tool_count = 0
+    accumulated_text = []
 
-    # Extract tool calls for thinking trace
-    tool_calls_trace = []
-    for msg in result["messages"]:
-        if isinstance(msg, AIMessage) and msg.tool_calls:
-            for tc in msg.tool_calls:
-                # Convert name back from agent__tool to agent:tool
-                cmd = tc["name"].replace("__", ":", 1)
-                tool_calls_trace.append({
-                    "command": cmd,
-                    "args": tc.get("args", {}),
-                    "status": "pending",
-                    "output": "",
-                })
-        elif isinstance(msg, ToolMessage):
-            # Match tool result back to pending trace entry
-            for entry in tool_calls_trace:
-                if entry["status"] == "pending":
-                    is_error = msg.status == "error" if hasattr(msg, "status") else False
-                    entry["status"] = "error" if is_error else "success"
-                    entry["output"] = msg.content[:2000] if msg.content else ""
-                    break
+    try:
+        async for event in graph.astream_events({"messages": messages}, version="v2"):
+            kind = event["event"]
 
-    # Final AI reply is the last AIMessage without tool_calls
-    reply = ""
-    for msg in reversed(result["messages"]):
-        if isinstance(msg, AIMessage) and not msg.tool_calls:
-            reply = msg.content
-            break
+            if kind == "on_chat_model_stream":
+                chunk = event["data"].get("chunk")
+                if chunk and hasattr(chunk, "content") and isinstance(chunk.content, str) and chunk.content:
+                    if not getattr(chunk, "tool_call_chunks", None):
+                        accumulated_text.append(chunk.content)
+                        yield f"event: token\ndata: {json.dumps({'text': chunk.content})}\n\n"
 
-    return reply or "I processed your request but have no additional commentary.", tool_calls_trace
+            elif kind == "on_tool_start":
+                tool_count += 1
+                name = event.get("name", "unknown")
+                cmd = name.replace("__", ":", 1)
+                args = event["data"].get("input", {})
+                yield f"event: tool_start\ndata: {json.dumps({'command': cmd, 'args': args})}\n\n"
+                accumulated_text.clear()
+
+            elif kind == "on_tool_end":
+                name = event.get("name", "unknown")
+                cmd = name.replace("__", ":", 1)
+                output_raw = event["data"].get("output", "")
+                if hasattr(output_raw, "content"):
+                    output_str = output_raw.content
+                elif isinstance(output_raw, str):
+                    output_str = output_raw
+                else:
+                    output_str = str(output_raw)
+                status = "error" if (hasattr(output_raw, "status") and output_raw.status == "error") else "success"
+                yield f"event: tool_end\ndata: {json.dumps({'command': cmd, 'status': status, 'output': output_str[:2000]})}\n\n"
+
+    except Exception as e:
+        err_msg = f"Error: {e}"
+        accumulated_text.append(err_msg)
+        yield f"event: token\ndata: {json.dumps({'text': err_msg})}\n\n"
+
+    final_reply = "".join(accumulated_text) or "I processed your request but have no additional commentary."
+    session_list.append({"role": "assistant", "content": final_reply})
+    yield f"event: done\ndata: {json.dumps({'tool_count': tool_count})}\n\n"
 
 
 # ── In-memory chat store ─────────────────────────────────────────────────
@@ -202,7 +216,9 @@ body {
     display: grid;
     grid-template-columns: 260px 1fr;
     height: 100vh; overflow: hidden;
+    padding-right: 400px; transition: padding-right .3s ease;
 }
+.app.pane-closed { padding-right: 0; }
 
 /* ── Left Pane: Tools Reference ────────────────────────────────── */
 .left-pane {
@@ -443,7 +459,7 @@ body {
 
 /* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .app { grid-template-columns: 1fr; }
+    .app { grid-template-columns: 1fr; padding-right: 0 !important; }
     .left-pane { display: none; }
     .right-pane { width: 100%; right: -100%; }
 }
@@ -582,7 +598,7 @@ def index(sess):
                 Span("soco agent", cls="chat-header-title"),
                 Div(
                     Span("0", id="think-count", cls="think-badge"),
-                    Button("Thinking", id="think-btn", cls="think-btn",
+                    Button("Thinking", id="think-btn", cls="think-btn active",
                            onclick="toggleThinking()"),
                     cls="chat-header-actions",
                 ),
@@ -601,10 +617,7 @@ def index(sess):
                 ),
                 Button("Send", type="submit", cls="chat-send", id="send-btn"),
                 cls="chat-form",
-                hx_post="/chat",
-                hx_target="#messages",
-                hx_swap="beforeend",
-                hx_disabled_elt="#send-btn",
+                onsubmit="sendMessage(event)",
             ),
             cls="center-pane",
         ),
@@ -616,7 +629,7 @@ def index(sess):
                 cls="right-header",
             ),
             Div(id="thinking-steps", cls="right-body"),
-            id="right-pane", cls="right-pane",
+            id="right-pane", cls="right-pane open",
         ),
         cls="app",
     ), Script("""
@@ -629,6 +642,7 @@ def index(sess):
         function toggleThinking() {
             document.getElementById('right-pane').classList.toggle('open');
             document.getElementById('think-btn').classList.toggle('active');
+            document.querySelector('.app').classList.toggle('pane-closed');
         }
         function fillChat(text) {
             const input = document.getElementById('chat-input');
@@ -650,6 +664,112 @@ def index(sess):
             const m = document.getElementById('messages');
             if (m) m.scrollTop = m.scrollHeight;
         }
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+        function addThinkStep(cls, title, body) {
+            const steps = document.getElementById('thinking-steps');
+            const step = document.createElement('div');
+            step.className = 'think-step ' + cls;
+            step.innerHTML = '<div class="think-step-type">' + escapeHtml(title) + '</div>'
+                + '<div class="think-step-body">' + escapeHtml(body) + '</div>';
+            steps.appendChild(step);
+            steps.scrollTop = steps.scrollHeight;
+        }
+        async function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const sendBtn = document.getElementById('send-btn');
+            sendBtn.disabled = true;
+            input.value = '';
+            autoResize(input);
+
+            const messages = document.getElementById('messages');
+
+            // User bubble
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg msg-user';
+            userDiv.innerHTML = '<div class="msg-bubble">' + escapeHtml(msg) + '</div>';
+            messages.appendChild(userDiv);
+            scrollChat();
+
+            // Assistant bubble (streaming)
+            const asstDiv = document.createElement('div');
+            asstDiv.className = 'msg msg-assistant';
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble streaming';
+            asstDiv.appendChild(bubble);
+            messages.appendChild(asstDiv);
+            scrollChat();
+
+            let badgeN = 0;
+            try {
+                const fd = new FormData();
+                fd.append('msg', msg);
+                const resp = await fetch('/chat', { method: 'POST', body: fd });
+                const reader = resp.body.getReader();
+                const dec = new TextDecoder();
+                let buf = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buf += dec.decode(value, { stream: true });
+
+                    const parts = buf.split('\\n\\n');
+                    buf = parts.pop();
+
+                    for (const part of parts) {
+                        if (!part.trim()) continue;
+                        const lines = part.trim().split('\\n');
+                        let evtType = '', evtData = '';
+                        for (const ln of lines) {
+                            if (ln.startsWith('event: ')) evtType = ln.slice(7);
+                            else if (ln.startsWith('data: ')) evtData = ln.slice(6);
+                        }
+                        if (!evtType || !evtData) continue;
+                        const data = JSON.parse(evtData);
+
+                        if (evtType === 'token') {
+                            bubble.textContent += data.text;
+                            scrollChat();
+                        } else if (evtType === 'tool_start') {
+                            badgeN++;
+                            const badge = document.createElement('div');
+                            badge.className = 'tool-badge';
+                            badge.id = 'badge-' + badgeN;
+                            badge.innerHTML = '<span class="dot" style="background:var(--yellow)"></span>' + escapeHtml(data.command);
+                            badge.onclick = toggleThinking;
+                            asstDiv.insertBefore(badge, bubble);
+                            addThinkStep('tool-call', 'tool_call: ' + data.command, 'Args: ' + JSON.stringify(data.args, null, 2));
+                            scrollChat();
+                        } else if (evtType === 'tool_end') {
+                            const badge = document.getElementById('badge-' + badgeN);
+                            if (badge) {
+                                const dot = badge.querySelector('.dot');
+                                if (dot) dot.style.background = data.status === 'success' ? 'var(--green)' : 'var(--red)';
+                            }
+                            const stepCls = data.status === 'success' ? 'tool-call' : 'error';
+                            addThinkStep(stepCls, data.status + ': ' + data.command, (data.output || '').slice(0, 500));
+                        } else if (evtType === 'done') {
+                            document.getElementById('think-count').textContent = String(data.tool_count || 0);
+                        }
+                    }
+                }
+            } catch (err) {
+                bubble.textContent += 'Error: ' + err.message;
+            }
+
+            bubble.classList.remove('streaming');
+            sendBtn.disabled = false;
+            input.focus();
+            scrollChat();
+        }
         // Auto-scroll on new messages
         const obs = new MutationObserver(scrollChat);
         document.addEventListener('DOMContentLoaded', () => {
@@ -670,59 +790,12 @@ async def chat(msg: str, sess):
 
     user_msg = msg.strip()
     chat_sessions[sid].append({"role": "user", "content": user_msg})
+    history = list(chat_sessions[sid][:-1])
 
-    # User message bubble
-    user_bubble = Div(
-        Div(user_msg, cls="msg-bubble"),
-        cls="msg msg-user",
+    return StreamingResponse(
+        agent_chat_stream(user_msg, history, chat_sessions[sid]),
+        media_type="text/event-stream",
     )
-
-    # Run agent
-    try:
-        reply, tool_calls = await agent_chat(user_msg, chat_sessions[sid][:-1])
-    except Exception as e:
-        reply = f"Error: {e}"
-        tool_calls = []
-
-    chat_sessions[sid].append({"role": "assistant", "content": reply})
-
-    # Tool call badges
-    badges = []
-    for tc in tool_calls:
-        dot_cls = "dot success" if tc["status"] == "success" else "dot error"
-        badges.append(
-            Div(Span(cls=dot_cls), tc["command"], cls="tool-badge",
-                onclick="toggleThinking()")
-        )
-
-    # Thinking panel OOB update
-    think_steps = []
-    for tc in tool_calls:
-        step_type = "tool_call" if tc["status"] == "success" else "error"
-        think_steps.append(thinking_step(step_type, tc["command"],
-                                          tc.get("output", "")[:500]))
-
-    oob_thinking = Div(
-        *think_steps,
-        id="thinking-steps",
-        hx_swap_oob="beforeend",
-    ) if think_steps else ""
-
-    oob_badge_count = Span(
-        str(len(tool_calls)),
-        id="think-count",
-        cls="think-badge",
-        hx_swap_oob="outerHTML",
-    ) if tool_calls else ""
-
-    # Assistant message bubble
-    assistant_bubble = Div(
-        *badges,
-        Div(reply, cls="msg-bubble"),
-        cls="msg msg-assistant",
-    )
-
-    return user_bubble, assistant_bubble, oob_thinking, oob_badge_count
 
 
 @rt("/context", methods=["POST"])
