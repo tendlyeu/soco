@@ -1,8 +1,8 @@
 services:
   soco-web:
     build: .
-    ports:
-      - "5001:5001"
+    expose:
+      - "5001"
     environment:
       - XAI_API_KEY
       - XAI_MODEL
