@@ -64,7 +64,7 @@ class SocoApp:
     """Interactive marketing CLI REPL."""
 
     def __init__(self):
-        self.console = Console()
+        self.console = Console(stderr=True)
         self.registry = AgentRegistry.get()
         self.context = SessionContext()
         self.help = HelpRenderer(self.registry)
